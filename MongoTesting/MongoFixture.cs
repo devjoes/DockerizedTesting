@@ -13,7 +13,6 @@ using MongoDB.Driver;
 
 namespace MongoTesting
 {
-
     public class MongoFixture : BaseFixture<MongoFixtureOptions>
     {
         public MongoFixture() : base("mongo", 1)
@@ -69,10 +68,5 @@ namespace MongoTesting
             }
         }
 
-    }
-
-    public class MongoFixtureOptions : FixtureOptions
-    {
-        public string Image { get; set; } = "mongo:latest";
     }
 }
