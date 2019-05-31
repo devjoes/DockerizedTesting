@@ -1,22 +1,21 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageId>DockerisedMongoTesting</PackageId>
+    <PackageId>DockerisedRedisTesting</PackageId>
     <Authors>Joe Shearn</Authors>
-    <Product>DockerisedMongoTesting</Product>
-    <Company>Joe Shearn</Company>
+    <Product>DockerisedRedisTesting</Product>
+    <Description>A fixture for XUnit that start up a Redis cache to test your code with. Whilst it was built for XUnit it should be framework agnostic.</Description>
+    <Copyright />
     <PackageProjectUrl>https://github.com/devjoes/DockerizedTesting</PackageProjectUrl>
     <RepositoryUrl>https://github.com/devjoes/DockerizedTesting</RepositoryUrl>
-    <Description>A fixture for XUnit that start up a mongo DB to test your code with. Whilst it was built for XUnit it should be framework agnostic.</Description>
-    <PackageTags>docker mongodb mongo unittesting testing</PackageTags>
+    <PackageTags>docker redis unittesting testing</PackageTags>
     <PackageLicenseExpression></PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Docker.DotNet" Version="3.125.2" />
-    <PackageReference Include="MongoDB.Driver" Version="2.8.0" />
+    <PackageReference Include="StackExchange.Redis" Version="2.0.601" />
   </ItemGroup>
 
   <ItemGroup>

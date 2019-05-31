@@ -67,7 +67,7 @@ namespace DockerizedTesting
             {
                 this.ContainerStarted = await this.IsContainerRunning(ports);
                 await Task.Delay(this.options.DelayMs);
-            } while (this.ContainerStarted && attempts++ <= this.options.MaxRetries);
+            } while (!this.ContainerStarted && attempts++ <= this.options.MaxRetries);
         }
 
         protected async Task StartContainer(int[] ports)
@@ -94,7 +94,8 @@ namespace DockerizedTesting
                 this.ContainerId = container.ID;
             }
 
-            this.ContainerStarting = await this.DockerClient.Containers.StartContainerAsync(this.ContainerId, new ContainerStartParameters());
+            await this.DockerClient.Containers.StartContainerAsync(this.ContainerId, new ContainerStartParameters());
+            this.ContainerStarting = true;
             this.options.ContainerHost.ContainerIds.TryAdd(this.ContainerId, this.DockerUri);
         }
 
