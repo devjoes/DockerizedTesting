@@ -2,10 +2,23 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Description>Base classes for https://github.com/devjoes/DockerizedTesting</Description>
+    <Authors>Joe Shearn</Authors>
+    <PackageProjectUrl>https://github.com/devjoes/DockerizedTesting</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/devjoes/DockerizedTesting</RepositoryUrl>
+    <PackageLicenseFile>license.txt</PackageLicenseFile>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Docker.DotNet" Version="3.125.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\DockerizedTesting.Mongo\license.txt">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>

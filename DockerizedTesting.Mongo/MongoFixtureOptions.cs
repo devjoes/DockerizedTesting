@@ -1,6 +1,4 @@
-﻿using DockerizedTesting;
-
-namespace MongoTesting
+﻿namespace DockerizedTesting.Mongo
 {
     public class MongoFixtureOptions : FixtureOptions
     {
