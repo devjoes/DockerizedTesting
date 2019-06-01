@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Docker.DotNet.Models;
-using DockerizedTesting;
 using StackExchange.Redis;
 
-namespace RedisTesting
+namespace DockerizedTesting.Redis
 {
     public class RedisFixture: BaseFixture<RedisFixtureOptions>
     {

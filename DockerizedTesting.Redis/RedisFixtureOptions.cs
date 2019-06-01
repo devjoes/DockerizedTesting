@@ -1,6 +1,4 @@
-﻿using DockerizedTesting;
-
-namespace RedisTesting
+﻿namespace DockerizedTesting.Redis
 {
     public class RedisFixtureOptions : FixtureOptions
     {

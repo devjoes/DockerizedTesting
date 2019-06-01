@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Net.Sockets;
-using System.Runtime.InteropServices;
-using System.Security.Cryptography.X509Certificates;
-using System.Threading;
 using System.Threading.Tasks;
-using Docker.DotNet;
 using Docker.DotNet.Models;
-using DockerizedTesting;
 using MongoDB.Driver;
 
-namespace MongoTesting
+namespace DockerizedTesting.Mongo
 {
     public class MongoFixture : BaseFixture<MongoFixtureOptions>
     {

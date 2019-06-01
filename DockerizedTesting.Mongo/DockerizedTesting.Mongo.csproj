@@ -3,15 +3,16 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageId>DockerisedMongoTesting</PackageId>
+    <PackageId>DockerizedsTesting.Mongo</PackageId>
     <Authors>Joe Shearn</Authors>
-    <Product>DockerisedMongoTesting</Product>
+    <Product>DockerizedsTesting.Mongo</Product>
     <Company>Joe Shearn</Company>
     <PackageProjectUrl>https://github.com/devjoes/DockerizedTesting</PackageProjectUrl>
     <RepositoryUrl>https://github.com/devjoes/DockerizedTesting</RepositoryUrl>
     <Description>A fixture for XUnit that start up a mongo DB to test your code with. Whilst it was built for XUnit it should be framework agnostic.</Description>
     <PackageTags>docker mongodb mongo unittesting testing</PackageTags>
     <PackageLicenseExpression></PackageLicenseExpression>
+    <PackageLicenseFile>license.txt</PackageLicenseFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,6 +22,13 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DockerizedTesting\DockerizedTesting.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="license.txt">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>

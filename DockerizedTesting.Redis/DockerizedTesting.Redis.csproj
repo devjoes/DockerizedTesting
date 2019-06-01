@@ -1,17 +1,18 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageId>DockerisedRedisTesting</PackageId>
+    <PackageId>DockerizedsTesting.Redis</PackageId>
     <Authors>Joe Shearn</Authors>
-    <Product>DockerisedRedisTesting</Product>
+    <Product>DockerizedsTesting.Redis</Product>
     <Description>A fixture for XUnit that start up a Redis cache to test your code with. Whilst it was built for XUnit it should be framework agnostic.</Description>
     <Copyright />
     <PackageProjectUrl>https://github.com/devjoes/DockerizedTesting</PackageProjectUrl>
     <RepositoryUrl>https://github.com/devjoes/DockerizedTesting</RepositoryUrl>
     <PackageTags>docker redis unittesting testing</PackageTags>
     <PackageLicenseExpression></PackageLicenseExpression>
+    <PackageLicenseFile>license.txt</PackageLicenseFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,6 +21,13 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DockerizedTesting\DockerizedTesting.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\DockerizedTesting.Mongo\license.txt">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>

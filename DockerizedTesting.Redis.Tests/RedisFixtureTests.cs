@@ -2,11 +2,10 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using DockerizedTesting;
 using StackExchange.Redis;
 using Xunit;
 
-namespace RedisTesting.Tests
+namespace DockerizedTesting.Redis.Tests
 {
     public class RedisFixtureTests : IClassFixture<RedisFixture>
     {

@@ -1,14 +1,11 @@
 using System;
-using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using DockerizedTesting;
 using MongoDB.Driver;
 using Xunit;
 
-namespace MongoTesting.Tests
+namespace DockerizedTesting.Mongo.Tests
 {
 
     public class MongoFixtureTests : IClassFixture<MongoFixture>
