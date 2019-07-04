@@ -3,9 +3,9 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageId>DockerizedTesting.Mongo</PackageId>
+    <PackageId>DockerizedsTesting.Mongo</PackageId>
     <Authors>Joe Shearn</Authors>
-    <Product>DockerizedTesting.Mongo</Product>
+    <Product>DockerizedsTesting.Mongo</Product>
     <Company>Joe Shearn</Company>
     <PackageProjectUrl>https://github.com/devjoes/DockerizedTesting</PackageProjectUrl>
     <RepositoryUrl>https://github.com/devjoes/DockerizedTesting</RepositoryUrl>

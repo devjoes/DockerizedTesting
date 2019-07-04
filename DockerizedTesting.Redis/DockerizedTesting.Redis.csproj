@@ -3,9 +3,9 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageId>DockerizedTesting.Redis</PackageId>
+    <PackageId>DockerizedsTesting.Redis</PackageId>
     <Authors>Joe Shearn</Authors>
-    <Product>DockerizedTesting.Redis</Product>
+    <Product>DockerizedsTesting.Redis</Product>
     <Description>A fixture for XUnit that start up a Redis cache to test your code with. Whilst it was built for XUnit it should be framework agnostic.</Description>
     <Copyright />
     <PackageProjectUrl>https://github.com/devjoes/DockerizedTesting</PackageProjectUrl>
