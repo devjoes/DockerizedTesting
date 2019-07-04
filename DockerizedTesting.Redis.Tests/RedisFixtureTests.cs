@@ -20,7 +20,6 @@ namespace DockerizedTesting.Redis.Tests
         [Fact]
         public async Task RedisIsReachable()
         {
-            await Task.Delay(500);
             Assert.True(this.redisFixture.ContainerStarting);
             Assert.True(this.redisFixture.ContainerStarted);
 
