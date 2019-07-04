@@ -13,6 +13,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DockerizedTesting.Redis", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DockerizedTesting.Redis.Tests", "DockerizedTesting.Redis.Tests\DockerizedTesting.Redis.Tests.csproj", "{B832D93B-3178-4F4A-BA23-7BF139D24D9B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DockerizedTesting.S3", "DockerizedTesting.S3\DockerizedTesting.S3.csproj", "{D9A13E20-6A78-4575-94EC-E1A92E112DD9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DockerizedTesting.S3.Tests", "DockerizedTesting.S3.Tests\DockerizedTesting.S3.Tests.csproj", "{30872449-0EC5-4733-B613-5E49C567ECFC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +43,14 @@ Global
 		{B832D93B-3178-4F4A-BA23-7BF139D24D9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B832D93B-3178-4F4A-BA23-7BF139D24D9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B832D93B-3178-4F4A-BA23-7BF139D24D9B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D9A13E20-6A78-4575-94EC-E1A92E112DD9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9A13E20-6A78-4575-94EC-E1A92E112DD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9A13E20-6A78-4575-94EC-E1A92E112DD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9A13E20-6A78-4575-94EC-E1A92E112DD9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{30872449-0EC5-4733-B613-5E49C567ECFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30872449-0EC5-4733-B613-5E49C567ECFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30872449-0EC5-4733-B613-5E49C567ECFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30872449-0EC5-4733-B613-5E49C567ECFC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

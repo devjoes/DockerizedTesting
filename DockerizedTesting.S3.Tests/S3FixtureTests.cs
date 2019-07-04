@@ -1,54 +1,71 @@
 using System;
+using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
-using StackExchange.Redis;
 using Xunit;
 
-namespace DockerizedTesting.Redis.Tests
+namespace DockerizedTesting.S3.Tests
 {
-    public class RedisFixtureTests : IClassFixture<RedisFixture>
+    public class S3FixtureTests : IClassFixture<S3Fixture>
     {
-        private readonly RedisFixture redisFixture;
+        private readonly S3Fixture s3Fixture;
 
-        public RedisFixtureTests(RedisFixture redisFixture)
+        public S3FixtureTests(S3Fixture s3Fixture)
         {
-            redisFixture.Start().Wait();
-            this.redisFixture = redisFixture;
+            s3Fixture.Start(new S3FixtureOptions { VolumePath = Path.GetTempPath() }).Wait();
+            this.s3Fixture = s3Fixture;
         }
 
         [Fact]
-        public async Task RedisIsReachable()
+        public async Task S3IsReachable()
         {
-            Assert.True(this.redisFixture.ContainerStarting);
-            Assert.True(this.redisFixture.ContainerStarted);
+            Assert.True(this.s3Fixture.ContainerStarting);
+            Assert.True(this.s3Fixture.ContainerStarted);
 
-            await this.hitRedis(this.redisFixture);
+            await this.hitS3(this.s3Fixture);
         }
 
         [Fact]
-        public async Task DisposeKillsRedis()
+        public async Task S3USesTempDirIfNotProvided()
         {
-            var fixture = new RedisFixture();
+            using (var tmpFixture = new S3Fixture())
+            {
+                tmpFixture.Start(new S3FixtureOptions {VolumePath = Path.GetTempPath()}).Wait();
+                await this.hitS3(tmpFixture);
+            }
+        }
+
+        [Fact]
+        public async Task DisposeKillsS3()
+        {
+            var fixture = new S3Fixture();
             await fixture.Start();
             Assert.True(fixture.ContainerStarting);
             Assert.True(fixture.ContainerStarted);
 
             fixture.Dispose();
 
-            await Assert.ThrowsAsync<RedisConnectionException>(async () =>
-                (await ConnectionMultiplexer.ConnectAsync("localhost:" + fixture.Ports.Single())).GetDatabase()
-                .SetAdd("foo", "bar"));
+            using (var client = new HttpClient())
+            {
+                await Assert.ThrowsAsync<HttpRequestException>(async () =>
+                {
+                    var result = await client.GetAsync("http://localhost:" + fixture.Ports.Single());
+                    result.EnsureSuccessStatusCode();
+                });
+            }
         }
 
         [Fact]
         public async Task ContainersAreRemovedOnShutdown()
         {
             int rnd = new Random().Next(10000, 12000 - 1);
+
             async Task<string> StartStopContainer()
             {
-                var fixture = new RedisFixture();
-                var options = new RedisFixtureOptionsWithOwnHost();
+                var fixture = new S3Fixture();
+                var options = new S3FixtureOptionsWithOwnHost();
                 options.ContainerHost.RemoveContainersOnExit = true;
                 // This ensures that the container will be unique and not being used by a diff test.
                 fixture.Ports[0] = rnd;
@@ -71,11 +88,16 @@ namespace DockerizedTesting.Redis.Tests
             Assert.NotEqual(id1, id2);
         }
 
-        private async Task<RedisFixture> hitRedis(RedisFixture fixture)
+        private async Task<S3Fixture> hitS3(S3Fixture fixture)
         {
             await fixture.Start();
-            var db = (await ConnectionMultiplexer.ConnectAsync("localhost:" + fixture.Ports.Single())).GetDatabase();
-            db.SetAdd("foo", "bar");
+
+            using (var client = new HttpClient())
+            {
+                var result = await client.GetAsync("http://localhost:" + fixture.Ports.Single());
+                result.EnsureSuccessStatusCode();
+            }
+
             return fixture;
         }
 
@@ -84,15 +106,16 @@ namespace DockerizedTesting.Redis.Tests
             public int Bar { get; set; }
         }
 
-        public class RedisFixtureOptionsWithOwnHost : RedisFixtureOptions
+        public class S3FixtureOptionsWithOwnHost : S3FixtureOptions
         {
-            public RedisFixtureOptionsWithOwnHost()
+            public S3FixtureOptionsWithOwnHost()
             {
                 var ctor = typeof(ContainerHost).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance,
                     null, new Type[0],
                     null);
                 this.ContainerHost = (IContainerHost)ctor.Invoke(null);
             }
+
             public override IContainerHost ContainerHost { get; }
         }
     }
