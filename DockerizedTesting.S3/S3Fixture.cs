@@ -55,7 +55,7 @@ namespace DockerizedTesting.S3
                 new Mount
                 {
                     Source = this.volumePath,
-                    Target = "/fake3_root",
+                    Target = "/fakes3_root",
                     Type = "bind"
                 }
             };
@@ -92,7 +92,7 @@ namespace DockerizedTesting.S3
             base.Dispose();
             if (this.tmpPath != null && Directory.Exists(this.tmpPath))
             {
-                Directory.Delete(this.tmpPath);
+                Directory.Delete(this.tmpPath, true);
             }
         }
     }
