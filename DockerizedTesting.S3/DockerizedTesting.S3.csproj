@@ -1,34 +1,33 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageId>DockerizedTesting.Mongo</PackageId>
+    <PackageId>DockerizedTesting.S3</PackageId>
     <Authors>Joe Shearn</Authors>
-    <Product>DockerizedTesting.Mongo</Product>
-    <Company>Joe Shearn</Company>
+    <Product>DockerizedTesting.S3</Product>
+    <Description>A fixture for XUnit that start up a fake local S3 bucket to test your code with. Whilst it was built for XUnit it should be framework agnostic.</Description>
+    <Copyright />
     <PackageProjectUrl>https://github.com/devjoes/DockerizedTesting</PackageProjectUrl>
     <RepositoryUrl>https://github.com/devjoes/DockerizedTesting</RepositoryUrl>
-    <Description>A fixture for XUnit that start up a mongo DB to test your code with. Whilst it was built for XUnit it should be framework agnostic.</Description>
-    <PackageTags>docker mongodb mongo unittesting testing</PackageTags>
+    <PackageTags>docker s3 amazon unittesting testing</PackageTags>
     <PackageLicenseExpression></PackageLicenseExpression>
     <PackageLicenseFile>license.txt</PackageLicenseFile>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Docker.DotNet" Version="3.125.2" />
-    <PackageReference Include="MongoDB.Driver" Version="2.8.0" />
-  </ItemGroup>
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DockerizedTesting\DockerizedTesting.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <None Remove="license.txt" />
     <None Include="license.txt">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DockerizedTesting\DockerizedTesting.csproj" />
   </ItemGroup>
 
 </Project>
