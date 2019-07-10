@@ -5,6 +5,8 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Amazon.S3;
+using Amazon.S3.Model;
 using Docker.DotNet.Models;
 
 namespace DockerizedTesting.S3
@@ -72,19 +74,23 @@ namespace DockerizedTesting.S3
 
         protected override async Task<bool> IsContainerRunning(int[] ports)
         {
-            
-                try
+            try
+            {
+                var s3Client = new AmazonS3Client(new AmazonS3Config
                 {
-                    using (var client = new HttpClient())
-                    {
-                        var result = await client.GetAsync("http://localhost:" + ports.Single());
-                        return result.IsSuccessStatusCode;
-                    }
-                }
-                catch
-                {
-                    return false;
-                }
+                    ServiceURL = "http://127.0.0.1:" + ports.Single(),
+                    ForcePathStyle = true
+                });
+                const string bucketName = "foo";
+                await s3Client.PutBucketAsync(new PutBucketRequest { BucketName = bucketName });
+                var buckets = await s3Client.ListBucketsAsync();
+                await s3Client.DeleteBucketAsync(bucketName);
+                return buckets.Buckets.Any(b => b.BucketName == bucketName);
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public override void Dispose()
