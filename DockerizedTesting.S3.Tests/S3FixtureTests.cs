@@ -8,12 +8,14 @@ using Xunit;
 
 namespace DockerizedTesting.S3.Tests
 {
-    public class S3FixtureTests : IClassFixture<S3Fixture>
+    public class S3FixtureTests : IClassFixture<S3Fixture>, IDisposable
     {
         private readonly S3Fixture s3Fixture;
+        private string tmpFile;
 
         public S3FixtureTests(S3Fixture s3Fixture)
         {
+            this.tmpFile = Path.GetTempFileName();
             s3Fixture.Start(new S3FixtureOptions { VolumePath = Path.GetTempPath() }).Wait();
             this.s3Fixture = s3Fixture;
         }
@@ -26,6 +28,19 @@ namespace DockerizedTesting.S3.Tests
 
             await this.hitS3(this.s3Fixture);
         }
+
+
+        [Fact]
+        public async Task S3FileIsReachable()
+        {
+            Assert.True(this.s3Fixture.ContainerStarting);
+            Assert.True(this.s3Fixture.ContainerStarted);
+            
+            await this.hitS3(this.s3Fixture, new FileInfo(this.tmpFile).Name);
+
+            
+        }
+
 
         [Fact]
         public async Task S3USesTempDirIfNotProvided()
@@ -88,22 +103,17 @@ namespace DockerizedTesting.S3.Tests
             Assert.NotEqual(id1, id2);
         }
 
-        private async Task<S3Fixture> hitS3(S3Fixture fixture)
+        private async Task<S3Fixture> hitS3(S3Fixture fixture, string keyPrefix = "")
         {
             await fixture.Start();
 
             using (var client = new HttpClient())
             {
-                var result = await client.GetAsync("http://localhost:" + fixture.Ports.Single());
+                var result = await client.GetAsync($"http://localhost:{fixture.Ports.Single()}/{keyPrefix}");
                 result.EnsureSuccessStatusCode();
             }
 
             return fixture;
-        }
-
-        public class Foo
-        {
-            public int Bar { get; set; }
         }
 
         public class S3FixtureOptionsWithOwnHost : S3FixtureOptions
@@ -117,6 +127,11 @@ namespace DockerizedTesting.S3.Tests
             }
 
             public override IContainerHost ContainerHost { get; }
+        }
+
+        public void Dispose()
+        {
+            File.Delete(this.tmpFile);
         }
     }
 }
