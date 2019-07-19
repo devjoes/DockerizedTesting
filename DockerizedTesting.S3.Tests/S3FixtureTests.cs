@@ -3,7 +3,10 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
+using Amazon.S3;
+using Amazon.S3.Model;
 using Xunit;
 
 namespace DockerizedTesting.S3.Tests
@@ -29,25 +32,22 @@ namespace DockerizedTesting.S3.Tests
             await this.hitS3(this.s3Fixture);
         }
 
-
         [Fact]
         public async Task S3FileIsReachable()
         {
             Assert.True(this.s3Fixture.ContainerStarting);
             Assert.True(this.s3Fixture.ContainerStarted);
-            
+
             await this.hitS3(this.s3Fixture, new FileInfo(this.tmpFile).Name);
 
-            
         }
 
-
         [Fact]
-        public async Task S3USesTempDirIfNotProvided()
+        public async Task S3StillWorksIfVolumePathIsNotProvided()
         {
             using (var tmpFixture = new S3Fixture())
             {
-                tmpFixture.Start(new S3FixtureOptions {VolumePath = Path.GetTempPath()}).Wait();
+                tmpFixture.Start().Wait();
                 await this.hitS3(tmpFixture);
             }
         }
@@ -107,12 +107,18 @@ namespace DockerizedTesting.S3.Tests
         {
             await fixture.Start();
 
-            using (var client = new HttpClient())
+            var s3Client = new AmazonS3Client(new AmazonS3Config
             {
-                var result = await client.GetAsync($"http://localhost:{fixture.Ports.Single()}/{keyPrefix}");
-                result.EnsureSuccessStatusCode();
-            }
-
+                ServiceURL = "http://127.0.0.1:" + fixture.Ports.Single(),
+                ForcePathStyle = true,
+                Timeout = TimeSpan.FromSeconds(5)
+            });
+            var cts = new CancellationTokenSource();
+            cts.CancelAfter(6000);
+            const string bucketName = "bar";
+            await s3Client.PutBucketAsync(new PutBucketRequest { BucketName = bucketName }, cts.Token);
+            await s3Client.ListBucketsAsync(cts.Token);
+            await s3Client.DeleteBucketAsync(bucketName, cts.Token);
             return fixture;
         }
 

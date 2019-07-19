@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using Amazon.S3;
 using Amazon.S3.Model;
@@ -26,13 +27,7 @@ namespace DockerizedTesting.S3
         {
             this.dockerImage = options.Image;
             this.volumePath = options.VolumePath;
-            if (string.IsNullOrEmpty(options.VolumePath))
-            {
-                this.tmpPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
-                Directory.CreateDirectory(this.tmpPath);
-                this.volumePath = this.tmpPath;
-            }
-            else
+            if (!string.IsNullOrEmpty(options.VolumePath))
             {
                 this.volumePath = options.VolumePath;
                 if (!Directory.Exists(this.volumePath))
@@ -52,15 +47,19 @@ namespace DockerizedTesting.S3
             const int s3Port = 4569;
 
             var hostConfig = Utils.HostWithBoundPorts(ports, s3Port);
-            hostConfig.Mounts = new List<Mount>
+            if (!string.IsNullOrEmpty(this.volumePath))
             {
-                new Mount
+                hostConfig.Mounts = new List<Mount>
                 {
-                    Source = this.volumePath,
-                    Target = "/fakes3_root",
-                    Type = "bind"
-                }
-            };
+                    new Mount
+                    {
+                        Source = this.volumePath,
+                        Target = "/fakes3_root",
+                        Type = "bind"
+                    }
+                };
+            }
+
             return new CreateContainerParameters(
                 new Config
                 {
@@ -79,12 +78,15 @@ namespace DockerizedTesting.S3
                 var s3Client = new AmazonS3Client(new AmazonS3Config
                 {
                     ServiceURL = "http://127.0.0.1:" + ports.Single(),
-                    ForcePathStyle = true
+                    ForcePathStyle = true,
+                    Timeout = TimeSpan.FromSeconds(5)
                 });
+                var cts = new CancellationTokenSource();
+                cts.CancelAfter(6000);
                 const string bucketName = "foo";
-                await s3Client.PutBucketAsync(new PutBucketRequest { BucketName = bucketName });
-                var buckets = await s3Client.ListBucketsAsync();
-                await s3Client.DeleteBucketAsync(bucketName);
+                await s3Client.PutBucketAsync(new PutBucketRequest { BucketName = bucketName }, cts.Token );
+                var buckets = await s3Client.ListBucketsAsync(cts.Token);
+                await s3Client.DeleteBucketAsync(bucketName, cts.Token);
                 return buckets.Buckets.Any(b => b.BucketName == bucketName);
             }
             catch
