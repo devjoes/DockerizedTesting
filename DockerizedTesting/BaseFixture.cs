@@ -1,17 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Docker.DotNet;
+using Docker.DotNet.Models;
+using System;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
-using Docker.DotNet;
-using Docker.DotNet.Models;
 
 namespace DockerizedTesting
 {
-    public abstract class BaseFixture<T> : IDisposable where T : FixtureOptions
+    public abstract class BaseFixture<T> : IBaseFixture where T : FixtureOptions
     {
         protected BaseFixture(string containerName, int exposedPorts)
         {
@@ -20,7 +19,7 @@ namespace DockerizedTesting
             this.Ports = Enumerable.Range(0, exposedPorts)
                 .Select(_ => this.GetPort()).ToArray();
         }
-
+        
         protected readonly string ContainerName;
         protected readonly DockerClient DockerClient;
         
@@ -28,7 +27,24 @@ namespace DockerizedTesting
         public int[] Ports { get; protected set; }
         public bool ContainerStarting { get; protected set; }
         public bool ContainerStarted { get; protected set; }
+
+        private string uniqueContainerName;
+
+        public string UniqueContainerName
+        {
+            get
+            {
+                if (this.uniqueContainerName == null)
+                {
+                    this.uniqueContainerName =
+                        $"{this.ContainerName}_{string.Join("_", this.Ports)}_{this.GetContainerParameters(this.Ports).GetHashCode()}";
+                }
+
+                return this.uniqueContainerName;
+            }
+        }
         
+
         protected Uri DockerUri =>
             new Uri(
                 RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
@@ -66,8 +82,8 @@ namespace DockerizedTesting
             do
             {
                 this.ContainerStarted = await this.IsContainerRunning(ports);
-                await Task.Delay(this.options.DelayMs);
-            } while (!this.ContainerStarted && attempts++ <= this.options.MaxRetries);
+                await Task.Delay(this.Options.DelayMs);
+            } while (!this.ContainerStarted && attempts++ <= this.Options.MaxRetries);
         }
 
         protected async Task StartContainer(int[] ports)
@@ -75,9 +91,8 @@ namespace DockerizedTesting
             var containerParameters = this.GetContainerParameters(ports);
             await this.PullImage(containerParameters.Image);
             
-            string name = $"{this.ContainerName}_{string.Join("_", ports)}_{containerParameters.GetHashCode()}";
             var containers = await this.DockerClient.Containers.ListContainersAsync(new ContainersListParameters { All = true });
-            var existingContainer = containers.SingleOrDefault(c => c.Names.Contains("/" + name));
+            var existingContainer = containers.SingleOrDefault(c => c.Names.Contains("/" + this.UniqueContainerName));
 
             if (existingContainer != null)
             {
@@ -89,14 +104,14 @@ namespace DockerizedTesting
             }
             if (this.ContainerId == null)
             {
-                containerParameters.Name = name;
+                containerParameters.Name = this.UniqueContainerName;
                 var container = await this.DockerClient.Containers.CreateContainerAsync(containerParameters);
                 this.ContainerId = container.ID;
             }
 
             await this.DockerClient.Containers.StartContainerAsync(this.ContainerId, new ContainerStartParameters());
             this.ContainerStarting = true;
-            this.options.ContainerHost.ContainerIds.TryAdd(this.ContainerId, this.DockerUri);
+            this.Options.ContainerHost.ContainerIds.TryAdd(this.ContainerId, this.DockerUri);
         }
 
         protected async Task PullImage(string image)
@@ -119,17 +134,18 @@ namespace DockerizedTesting
 
         public virtual async Task Start(T opts)
         {
-            this.options = opts;
+            this.Options = opts;
             await this.StartContainer(this.Ports);
             await this.WaitForContainer(this.Ports);
         }
 
-        private bool isDisposed;
-        private T options;
+        public bool IsDisposed { get; protected set; }
+        public T Options;
 
         public virtual void Dispose()
         {
-            if (this.isDisposed || this.DockerClient == null)
+            //TODO: When .net 3 is out create a watchdog process using https://laurentkempe.com/2019/02/18/dynamically-compile-and-run-code-using-dotNET-Core-3.0/
+            if (this.IsDisposed || this.DockerClient == null || this.ContainerId == null)
             {
                 return;
             }
@@ -139,9 +155,9 @@ namespace DockerizedTesting
             {
                 this.DockerClient.Containers.KillContainerAsync(this.ContainerId, new ContainerKillParameters()).Wait();
             }
-            Task.Delay(this.options.DelayMs).Wait();
+            Task.Delay(this.Options.DelayMs).Wait();
             this.DockerClient.Dispose();
-            this.isDisposed = true;
+            this.IsDisposed = true;
         }
 
     }
