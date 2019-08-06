@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Users\Joe\Downloads\confluent-kafka-dotnet-master\confluent-kafka-dotnet-master\src\Confluent.Kafka\Confluent.Kafka.csproj" />
+    <ProjectReference Include="..\DockerizedTesting\DockerizedTesting.csproj" />
+  </ItemGroup>
+
+</Project>

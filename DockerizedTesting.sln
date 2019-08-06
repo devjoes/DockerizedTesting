@@ -13,9 +13,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DockerizedTesting.Redis", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DockerizedTesting.Redis.Tests", "DockerizedTesting.Redis.Tests\DockerizedTesting.Redis.Tests.csproj", "{B832D93B-3178-4F4A-BA23-7BF139D24D9B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DockerizedTesting.S3", "DockerizedTesting.S3\DockerizedTesting.S3.csproj", "{D9A13E20-6A78-4575-94EC-E1A92E112DD9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DockerizedTesting.S3", "DockerizedTesting.S3\DockerizedTesting.S3.csproj", "{D9A13E20-6A78-4575-94EC-E1A92E112DD9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DockerizedTesting.S3.Tests", "DockerizedTesting.S3.Tests\DockerizedTesting.S3.Tests.csproj", "{30872449-0EC5-4733-B613-5E49C567ECFC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DockerizedTesting.S3.Tests", "DockerizedTesting.S3.Tests\DockerizedTesting.S3.Tests.csproj", "{30872449-0EC5-4733-B613-5E49C567ECFC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DockerizedTesting.Kafka", "DockerizedTesting.Kafka\DockerizedTesting.Kafka.csproj", "{632C228B-2067-4972-8DB5-FE6D2BB3F33E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DockerizedTesting.Kafka.Tests", "DockerizedTesting.Kafka.Tests\DockerizedTesting.Kafka.Tests.csproj", "{63E4FCFC-9DFD-4F1C-BDFC-D085E4D631C2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Confluent.Kafka", "..\..\Users\Joe\Downloads\confluent-kafka-dotnet-master\confluent-kafka-dotnet-master\src\Confluent.Kafka\Confluent.Kafka.csproj", "{665F65AF-144E-4AD0-B61D-E929505BA4D2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +57,18 @@ Global
 		{30872449-0EC5-4733-B613-5E49C567ECFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{30872449-0EC5-4733-B613-5E49C567ECFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{30872449-0EC5-4733-B613-5E49C567ECFC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{632C228B-2067-4972-8DB5-FE6D2BB3F33E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{632C228B-2067-4972-8DB5-FE6D2BB3F33E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{632C228B-2067-4972-8DB5-FE6D2BB3F33E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{632C228B-2067-4972-8DB5-FE6D2BB3F33E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{63E4FCFC-9DFD-4F1C-BDFC-D085E4D631C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63E4FCFC-9DFD-4F1C-BDFC-D085E4D631C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63E4FCFC-9DFD-4F1C-BDFC-D085E4D631C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63E4FCFC-9DFD-4F1C-BDFC-D085E4D631C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{665F65AF-144E-4AD0-B61D-E929505BA4D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{665F65AF-144E-4AD0-B61D-E929505BA4D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{665F65AF-144E-4AD0-B61D-E929505BA4D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{665F65AF-144E-4AD0-B61D-E929505BA4D2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
