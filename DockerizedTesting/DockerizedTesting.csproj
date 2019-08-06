@@ -8,6 +8,7 @@
     <PackageProjectUrl>https://github.com/devjoes/DockerizedTesting</PackageProjectUrl>
     <RepositoryUrl>https://github.com/devjoes/DockerizedTesting</RepositoryUrl>
     <PackageLicenseFile>license.txt</PackageLicenseFile>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
