@@ -6,7 +6,7 @@
     <PackageId>DockerizedTesting.Redis</PackageId>
     <Authors>Joe Shearn</Authors>
     <Product>DockerizedTesting.Redis</Product>
-    <Description>A fixture for XUnit that start up a Redis cache to test your code with. Whilst it was built for XUnit it should be framework agnostic.</Description>
+    <Description>A fixture for XUnit that starts up a Redis cache to test your code with. Whilst it was built for XUnit it should be framework agnostic.</Description>
     <Copyright />
     <PackageProjectUrl>https://github.com/devjoes/DockerizedTesting</PackageProjectUrl>
     <RepositoryUrl>https://github.com/devjoes/DockerizedTesting</RepositoryUrl>
