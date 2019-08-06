@@ -2,6 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>Joe Shearn</Authors>
+    <Company>Joe Shearn</Company>
+    <Description>A fixture for XUnit that starts up Kafka and Zookeeper to test your code with. Whilst it was built for XUnit it should be framework agnostic.</Description>
+    <PackageLicenseFile>license.txt</PackageLicenseFile>
+    <PackageProjectUrl>https://github.com/devjoes/DockerizedTesting</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/devjoes/DockerizedTesting</RepositoryUrl>
+    <PackageTags>docker kafka zookeeper unittesting testing</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
@@ -10,6 +18,13 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DockerizedTesting\DockerizedTesting.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="license.txt">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>
