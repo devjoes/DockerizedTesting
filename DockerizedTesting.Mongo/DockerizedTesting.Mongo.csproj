@@ -3,9 +3,9 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageId>DockerizedsTesting.Mongo</PackageId>
+    <PackageId>DockerizedTesting.Mongo</PackageId>
     <Authors>Joe Shearn</Authors>
-    <Product>DockerizedsTesting.Mongo</Product>
+    <Product>DockerizedTesting.Mongo</Product>
     <Company>Joe Shearn</Company>
     <PackageProjectUrl>https://github.com/devjoes/DockerizedTesting</PackageProjectUrl>
     <RepositoryUrl>https://github.com/devjoes/DockerizedTesting</RepositoryUrl>
@@ -13,6 +13,7 @@
     <PackageTags>docker mongodb mongo unittesting testing</PackageTags>
     <PackageLicenseExpression></PackageLicenseExpression>
     <PackageLicenseFile>license.txt</PackageLicenseFile>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
