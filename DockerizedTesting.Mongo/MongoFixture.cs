@@ -25,7 +25,7 @@ namespace DockerizedTesting.Mongo
 
         private string dockerImage;
 
-        protected string GetMongoConnectionString(int port) => $"mongodb://localhost:{port}";
+        protected string GetMongoConnectionString(int port) => $"mongodb://localhost:{port}?connectTimeoutMS=2000";
 
         protected override CreateContainerParameters GetContainerParameters(int[] ports)
         {

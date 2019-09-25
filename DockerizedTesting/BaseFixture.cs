@@ -4,7 +4,6 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -15,14 +14,15 @@ namespace DockerizedTesting
         protected BaseFixture(string containerName, int exposedPorts)
         {
             this.ContainerName = containerName;
-            this.DockerClient = new DockerClientConfiguration(this.DockerUri).CreateClient();
+            this.DockerClient = this.DockerClientProvider.GetDockerClient();
             this.Ports = Enumerable.Range(0, exposedPorts)
                 .Select(_ => this.GetPort()).ToArray();
         }
-        
+
         protected readonly string ContainerName;
         protected readonly DockerClient DockerClient;
-        
+
+        public IDockerClientProvider DockerClientProvider { get; set; } = new DockerClientProvider();
         public string ContainerId { get; protected set; }
         public int[] Ports { get; protected set; }
         public bool ContainerStarting { get; protected set; }
@@ -30,28 +30,11 @@ namespace DockerizedTesting
 
         private string uniqueContainerName;
 
-        public string UniqueContainerName
-        {
-            get
-            {
-                if (this.uniqueContainerName == null)
-                {
-                    this.uniqueContainerName =
-                        $"{this.ContainerName}_{string.Join("_", this.Ports)}_{this.GetContainerParameters(this.Ports).GetHashCode()}";
-                }
-
-                return this.uniqueContainerName;
-            }
-        }
-        
-
-        protected Uri DockerUri =>
-            new Uri(
-                RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
-                    ? "npipe://./pipe/docker_engine"
-                    : "unix:///var/run/docker.sock"
+        public string UniqueContainerName =>
+            this.uniqueContainerName ?? (this.uniqueContainerName =
+                $"{this.ContainerName}_{string.Join("_", this.Ports)}_{this.GetContainerParameters(this.Ports).GetHashCode()}"
             );
-        
+
         protected int GetPort()
         {
             bool gotPort;
@@ -111,13 +94,12 @@ namespace DockerizedTesting
 
             await this.DockerClient.Containers.StartContainerAsync(this.ContainerId, new ContainerStartParameters());
             this.ContainerStarting = true;
-            this.Options.ContainerHost.ContainerIds.TryAdd(this.ContainerId, this.DockerUri);
+            this.Options.ContainerHost.ContainerIds.TryAdd(this.ContainerId, this.DockerClientProvider.DockerUri);
         }
 
         protected async Task PullImage(string image)
         {
             var splitImage = image.Split(':');
-            //todo: thread safety
             if (!(await this.DockerClient.Images.ListImagesAsync(new ImagesListParameters{MatchName = image})).Any())
             {
                 await this.DockerClient.Images.CreateImageAsync(new ImagesCreateParameters
