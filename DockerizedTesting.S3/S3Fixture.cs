@@ -79,7 +79,9 @@ namespace DockerizedTesting.S3
                 {
                     ServiceURL = "http://127.0.0.1:" + ports.Single(),
                     ForcePathStyle = true,
-                    Timeout = TimeSpan.FromSeconds(5)
+                    Timeout = TimeSpan.FromSeconds(3),
+                    ReadWriteTimeout = TimeSpan.FromSeconds(3),
+                    MaxErrorRetry = 1
                 });
                 var cts = new CancellationTokenSource();
                 cts.CancelAfter(6000);

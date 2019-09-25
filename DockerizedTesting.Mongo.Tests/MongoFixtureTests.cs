@@ -37,9 +37,19 @@ namespace DockerizedTesting.Mongo.Tests
 
             fixture.Dispose();
 
-            await Assert.ThrowsAsync<MongoConnectionException>(async () =>
-                await new MongoClient("mongodb://localhost:" + fixture.Ports.Single())
-                    .ListDatabaseNamesAsync());
+            var ex = await Assert.ThrowsAsync<AggregateException>(async () =>
+            {
+                try
+                {
+                    await new MongoClient("mongodb://localhost:" + fixture.Ports.Single())
+                        .ListDatabaseNamesAsync();
+                }
+                catch (Exception e)
+                {
+                    throw new AggregateException(e);
+                }
+            });
+            Assert.True(ex.InnerException is MongoConnectionException || ex.InnerException is TimeoutException);
         }
 
         [Fact]

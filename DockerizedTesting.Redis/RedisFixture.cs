@@ -25,7 +25,7 @@ namespace DockerizedTesting.Redis
 
         private string dockerImage;
 
-        protected string GetRedisConfiguration(int port) => $"localhost:{port}";
+        protected string GetRedisConfiguration(int port) => $"localhost:{port},connectTimeout=3000,connectRetry=1";
 
         protected override CreateContainerParameters GetContainerParameters(int[] ports)
         {
