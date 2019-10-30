@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 
 namespace DockerizedTesting
 {
+    //TODO: Create Image provider that either returns a url or build a local image
+
     public abstract class BaseFixture<T> : IBaseFixture where T : FixtureOptions
     {
         protected BaseFixture(string containerName, int exposedPorts)
