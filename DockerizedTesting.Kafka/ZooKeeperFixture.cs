@@ -20,11 +20,9 @@ namespace DockerizedTesting.Kafka
         public override Task Start(ZooKeeperOptions options)
         {
             this.Options = options;
-            this.dockerImage = options.Image;
             return base.Start(options);
         }
 
-        private string dockerImage;
 
         protected override CreateContainerParameters GetContainerParameters(int[] ports)
         {
@@ -35,7 +33,6 @@ namespace DockerizedTesting.Kafka
             return new CreateContainerParameters(
                 new Config
                 {
-                    Image = this.dockerImage,
                     ExposedPorts = new Dictionary<string, EmptyStruct>()
                     {
                         {zooKeeperPort.ToString(), default}
