@@ -172,7 +172,9 @@ namespace DockerizedTesting.ImageProviders
                     using (var reader = new StreamReader(result))
                     {
                         string resultContent = reader.ReadToEnd();
-                        if (!await tagExists(dockerClient, tag))
+
+                        var images = await dockerClient.Images.ListImagesAsync(new ImagesListParameters{MatchName = tag });
+                        if (!images.Any())
                         {
                             throw new DockerBuildFailedException(resultContent);
                         }
@@ -187,21 +189,5 @@ namespace DockerizedTesting.ImageProviders
             }
         }
 
-        private static async Task<bool> tagExists(IDockerClient dockerClient, string tag)
-        {
-            //TODO: I think we dont need to delay now that we read the stream
-            int attempts = 0;
-            do
-            {
-                var images = await dockerClient.Images.ListImagesAsync(new ImagesListParameters());
-                if (images.Any(i => i.RepoTags.Contains(tag)))
-                {
-                    return true;
-                }
-                await Task.Delay(TimeSpan.FromSeconds(1));
-            } while (attempts++ < 5);
-
-            return false;
-        }
     }
 }
