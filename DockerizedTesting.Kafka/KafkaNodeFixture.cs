@@ -47,11 +47,9 @@ namespace DockerizedTesting.Kafka
         {
             this.Options = options;
             this.Ip = this.Options.IpAddress ?? this.getIp();
-            this.dockerImage = options.Image;
             return base.Start(options);
         }
 
-        private string dockerImage;
         public string Ip { get; set; }
 
         protected override CreateContainerParameters GetContainerParameters(int[] ports)
@@ -64,7 +62,6 @@ namespace DockerizedTesting.Kafka
             return new CreateContainerParameters(
                 new Config
                 {
-                    Image = this.dockerImage,
                     ExposedPorts = new Dictionary<string, EmptyStruct>()
                     {
                         {kafkaPort.ToString(), default}

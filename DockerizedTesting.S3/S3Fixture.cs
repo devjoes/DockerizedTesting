@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Amazon.Runtime;
 using Amazon.S3;
 using Amazon.S3.Model;
 using Docker.DotNet.Models;
@@ -25,7 +26,6 @@ namespace DockerizedTesting.S3
 
         public override Task Start(S3FixtureOptions options)
         {
-            this.dockerImage = options.Image;
             this.volumePath = options.VolumePath;
             if (!string.IsNullOrEmpty(options.VolumePath))
             {
@@ -38,7 +38,6 @@ namespace DockerizedTesting.S3
             return base.Start(options);
         }
 
-        private string dockerImage;
         private string volumePath;
         private string tmpPath = null;
 
@@ -63,7 +62,6 @@ namespace DockerizedTesting.S3
             return new CreateContainerParameters(
                 new Config
                 {
-                    Image = this.dockerImage,
                     ExposedPorts = new Dictionary<string, EmptyStruct>() { { s3Port.ToString(), default } },
                 })
             {
@@ -75,18 +73,20 @@ namespace DockerizedTesting.S3
         {
             try
             {
-                var s3Client = new AmazonS3Client(new AmazonS3Config
-                {
-                    ServiceURL = "http://127.0.0.1:" + ports.Single(),
-                    ForcePathStyle = true,
-                    Timeout = TimeSpan.FromSeconds(3),
-                    ReadWriteTimeout = TimeSpan.FromSeconds(3),
-                    MaxErrorRetry = 1
-                });
+                var s3Client = new AmazonS3Client(
+                    new AnonymousAWSCredentials(),
+                    new AmazonS3Config
+                    {
+                        ServiceURL = "http://127.0.0.1:" + ports.Single(),
+                        ForcePathStyle = true,
+                        Timeout = TimeSpan.FromSeconds(3),
+                        ReadWriteTimeout = TimeSpan.FromSeconds(3),
+                        MaxErrorRetry = 1
+                    });
                 var cts = new CancellationTokenSource();
                 cts.CancelAfter(6000);
                 const string bucketName = "foo";
-                await s3Client.PutBucketAsync(new PutBucketRequest { BucketName = bucketName }, cts.Token );
+                await s3Client.PutBucketAsync(new PutBucketRequest { BucketName = bucketName }, cts.Token);
                 var buckets = await s3Client.ListBucketsAsync(cts.Token);
                 await s3Client.DeleteBucketAsync(bucketName, cts.Token);
                 return buckets.Buckets.Any(b => b.BucketName == bucketName);

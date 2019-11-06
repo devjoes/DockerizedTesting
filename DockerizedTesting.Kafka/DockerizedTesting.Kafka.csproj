@@ -10,10 +10,11 @@
     <PackageProjectUrl>https://github.com/devjoes/DockerizedTesting</PackageProjectUrl>
     <RepositoryUrl>https://github.com/devjoes/DockerizedTesting</RepositoryUrl>
     <PackageTags>docker kafka zookeeper unittesting testing</PackageTags>
+    <Version>1.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Confluent.Kafka" Version="1.1.0" />
+    <PackageReference Include="Confluent.Kafka" Version="1.2.1" />
   </ItemGroup>
 
   <ItemGroup>

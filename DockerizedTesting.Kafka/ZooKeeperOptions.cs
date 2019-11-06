@@ -1,7 +1,9 @@
-﻿namespace DockerizedTesting.Kafka
+﻿using DockerizedTesting.ImageProviders;
+
+namespace DockerizedTesting.Kafka
 {
     public class ZooKeeperOptions : FixtureOptions
     {
-        public string Image { get; set; } = "bitnami/zookeeper:latest";
+        public override IDockerImageProvider ImageProvider { get; } = new DockerHubImageProvider("bitnami/zookeeper:latest");
     }
 }

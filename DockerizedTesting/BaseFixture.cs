@@ -72,8 +72,8 @@ namespace DockerizedTesting
         protected async Task StartContainer(int[] ports)
         {
             var containerParameters = this.GetContainerParameters(ports);
-            await this.PullImage(containerParameters.Image);
-            
+            containerParameters.Image = await this.Options.ImageProvider.GetImage(this.DockerClient);
+
             var containers = await this.DockerClient.Containers.ListContainersAsync(new ContainersListParameters { All = true });
             var existingContainer = containers.SingleOrDefault(c => c.Names.Contains("/" + this.UniqueContainerName));
 
@@ -96,21 +96,7 @@ namespace DockerizedTesting
             this.ContainerStarting = true;
             this.Options.ContainerHost.ContainerIds.TryAdd(this.ContainerId, this.DockerClientProvider.DockerUri);
         }
-
-        protected async Task PullImage(string image)
-        {
-            var splitImage = image.Split(':');
-            if (!(await this.DockerClient.Images.ListImagesAsync(new ImagesListParameters{MatchName = image})).Any())
-            {
-                await this.DockerClient.Images.CreateImageAsync(new ImagesCreateParameters
-                {
-                    FromImage = splitImage.First(),
-                    Tag = splitImage.Length == 1 ? "latest" : splitImage.Last()
-                }, new AuthConfig(), new Progress<JSONMessage>());
-            }
-        }
-
-
+        
         protected abstract CreateContainerParameters GetContainerParameters(int[] ports);
         protected abstract Task<bool> IsContainerRunning(int[] ports);
 

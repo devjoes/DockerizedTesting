@@ -19,11 +19,8 @@ namespace DockerizedTesting.Redis
 
         public override Task Start(RedisFixtureOptions options)
         {
-            this.dockerImage = options.Image;
             return base.Start(options);
         }
-
-        private string dockerImage;
 
         protected string GetRedisConfiguration(int port) => $"localhost:{port},connectTimeout=3000,connectRetry=1";
 
@@ -33,7 +30,6 @@ namespace DockerizedTesting.Redis
             return new CreateContainerParameters(
                 new Config
                 {
-                    Image = this.dockerImage,
                     ExposedPorts = new Dictionary<string, EmptyStruct>() { { redisPort.ToString(), default } }
                 })
             {

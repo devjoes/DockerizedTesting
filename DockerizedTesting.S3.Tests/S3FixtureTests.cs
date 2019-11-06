@@ -5,21 +5,20 @@ using System.Net.Http;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Amazon.Runtime;
 using Amazon.S3;
 using Amazon.S3.Model;
 using Xunit;
 
 namespace DockerizedTesting.S3.Tests
 {
-    public class S3FixtureTests : IClassFixture<S3Fixture>, IDisposable
+    public class S3FixtureTests : IClassFixture<S3Fixture>
     {
         private readonly S3Fixture s3Fixture;
-        private string tmpFile;
 
         public S3FixtureTests(S3Fixture s3Fixture)
         {
-            this.tmpFile = Path.GetTempFileName();
-            s3Fixture.Start(new S3FixtureOptions { VolumePath = Path.GetTempPath() }).Wait();
+            s3Fixture.Start().Wait();
             this.s3Fixture = s3Fixture;
         }
 
@@ -38,18 +37,8 @@ namespace DockerizedTesting.S3.Tests
             Assert.True(this.s3Fixture.ContainerStarting);
             Assert.True(this.s3Fixture.ContainerStarted);
 
-            await this.hitS3(this.s3Fixture, new FileInfo(this.tmpFile).Name);
+            await this.hitS3(this.s3Fixture);
 
-        }
-
-        [Fact]
-        public async Task S3StillWorksIfVolumePathIsNotProvided()
-        {
-            using (var tmpFixture = new S3Fixture())
-            {
-                tmpFixture.Start().Wait();
-                await this.hitS3(tmpFixture);
-            }
         }
 
         [Fact]
@@ -103,16 +92,18 @@ namespace DockerizedTesting.S3.Tests
             Assert.NotEqual(id1, id2);
         }
 
-        private async Task<S3Fixture> hitS3(S3Fixture fixture, string keyPrefix = "")
+        private async Task<S3Fixture> hitS3(S3Fixture fixture)
         {
             await fixture.Start();
 
-            var s3Client = new AmazonS3Client(new AmazonS3Config
-            {
-                ServiceURL = "http://127.0.0.1:" + fixture.Ports.Single(),
-                ForcePathStyle = true,
-                Timeout = TimeSpan.FromSeconds(5)
-            });
+            var s3Client = new AmazonS3Client(
+                new AnonymousAWSCredentials(),
+                new AmazonS3Config
+                {
+                    ServiceURL = "http://127.0.0.1:" + fixture.Ports.Single(),
+                    ForcePathStyle = true,
+                    Timeout = TimeSpan.FromSeconds(5)
+                });
             var cts = new CancellationTokenSource();
             cts.CancelAfter(6000);
             const string bucketName = "bar";
@@ -135,9 +126,5 @@ namespace DockerizedTesting.S3.Tests
             public override IContainerHost ContainerHost { get; }
         }
 
-        public void Dispose()
-        {
-            File.Delete(this.tmpFile);
-        }
     }
 }

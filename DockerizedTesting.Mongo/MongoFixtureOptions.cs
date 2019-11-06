@@ -1,7 +1,9 @@
-﻿namespace DockerizedTesting.Mongo
+﻿using DockerizedTesting.ImageProviders;
+
+namespace DockerizedTesting.Mongo
 {
     public class MongoFixtureOptions : FixtureOptions
     {
-        public string Image { get; set; } = "mongo:latest";
+        public override IDockerImageProvider ImageProvider { get; } = new DockerHubImageProvider("mongo:latest");
     }
 }

@@ -16,15 +16,7 @@ namespace DockerizedTesting.Mongo
         {
             return this.Start(new MongoFixtureOptions());
         }
-
-        public override Task Start(MongoFixtureOptions options)
-        {
-            this.dockerImage = options.Image;
-            return base.Start(options);
-        }
-
-        private string dockerImage;
-
+        
         protected string GetMongoConnectionString(int port) => $"mongodb://localhost:{port}?connectTimeoutMS=2000";
 
         protected override CreateContainerParameters GetContainerParameters(int[] ports)
@@ -33,7 +25,6 @@ namespace DockerizedTesting.Mongo
             return new CreateContainerParameters(
                 new Config
                 {
-                    Image = this.dockerImage,
                     ExposedPorts = new Dictionary<string, EmptyStruct>() { { mongoPort.ToString(), default } },
                     Env = new List<string>(new[]
                     {
