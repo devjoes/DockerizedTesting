@@ -23,7 +23,7 @@ namespace DockerizedTesting.MsSql
             return base.Start(options);
         }
 
-        protected string GetMsSqlConnectionString(int port) => $"Server=localhost,{port};Database=master;TrustServerCertificate=True;User Id=sa;Password={this.Options.SaPassword};Connect Timeout=5";
+        public string GetMsSqlConnectionString(int port, string database = "master") => $"Server=localhost,{port};Database={database};TrustServerCertificate=True;User Id=sa;Password={this.Options.SaPassword};Connect Timeout=5";
 
         protected override CreateContainerParameters GetContainerParameters(int[] ports)
         {

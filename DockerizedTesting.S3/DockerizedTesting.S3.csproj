@@ -16,7 +16,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>1.0.3</Version>
+    <Version>1.1.0</Version>
     <PackageReleaseNotes>Fixed issue where it would wait forever for s3 to come up
 Made mounting a volume optional (you can sometimes get this issue otherwise https://github.com/jubos/fake-s3/issues/66 )</PackageReleaseNotes>
   </PropertyGroup>

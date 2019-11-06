@@ -3,10 +3,11 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Docker.DotNet.Models;
+using DockerizedTesting;
 using DockerizedTesting.ImageProviders;
 using Xunit;
 
-namespace DockerizedTesting.Tests
+namespace ExampleProject.Tests
 {
     public class ExampleProjectTests : IClassFixture<ExampleTestFixture>
     {

@@ -15,15 +15,22 @@ namespace DockerizedTesting.ImageProviders
     {
 
         public FileInfo GetDockerfile(KeyValuePair<string, string> label) =>
-            getDockerFiles()
-                .SingleOrDefault(f => getLabels(f.FullName).Contains(label))
+            ignoreDockerFilesWhichAreCopiedToOutputOfOtherProjects(getDockerFiles()
+                .Where(f => getLabels(f.FullName).Contains(label)).ToArray())
             ?? throw new ArgumentException($"Could not find Dockerfile with the label {label.Key} matching {label.Value}", nameof(label));
+
+        private static FileInfo ignoreDockerFilesWhichAreCopiedToOutputOfOtherProjects(FileInfo[] dockerFiles)
+        {
+            var projectDirs = dockerFiles.Where(f => !f.FullName.Contains("bin"))
+                .Select(f => f.Directory?.FullName + Path.DirectorySeparatorChar);
+            return dockerFiles.LastOrDefault(f => projectDirs.Any(d => f.FullName.StartsWith(d)));
+        }
 
         private static Dictionary<string, string> getLabels(string path) =>
             File.ReadAllLines(path)
                 .Where(l => l.ToUpper().StartsWith("LABEL"))
                 .Select(l => l.Substring(5).Trim())
-                .Select(l => Regex.Matches(l, "\"?([^\"]*)\"?=\"?([^\"]*)[\"\\s]"))
+                .Select(l => Regex.Matches($"{l}\n", "\"?([^\"]*)\"?=\"?([^\"]*)[\"\\s]"))
                 .SelectMany(i => i.Cast<Match>())
                 .GroupBy(r => r.Groups[1].Value.Trim('"')).Select(g => g.First())
                 .ToDictionary(

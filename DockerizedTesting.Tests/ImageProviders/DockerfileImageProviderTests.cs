@@ -62,6 +62,7 @@ namespace DockerizedTesting.Tests.ImageProviders
         public async Task BuildsImageFromDockerfile()
         {
             var dockerFile = ProjectLocator.FindSlnFiles().First().Directory
+                .GetDirectories("Examples").Single()
                 .GetDirectories("ExampleProject").Single()
                 .GetFiles("Dockerfile").Single();
 
@@ -77,6 +78,7 @@ namespace DockerizedTesting.Tests.ImageProviders
         public async Task FindsDockerFileWhenSuppliedWithProjectName()
         {
             var dockerFile = ProjectLocator.FindSlnFiles().First().Directory
+                .GetDirectories("Examples").Single()
                 .GetDirectories("ExampleProject").Single()
                 .GetFiles("Dockerfile").Single();
 

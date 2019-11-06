@@ -26,7 +26,7 @@ namespace DockerizedTesting.Tests.ImageProviders
             }
             var locator = new ProjectLocator();
             var dockerizedProjects = locator.GetProjectNamesFromSln(slnPath).ToArray();
-            var exampleProj = dockerizedProjects.SingleOrDefault(p => p.names.Contains(nameof(ExampleProjectNs)));
+            var exampleProj = dockerizedProjects.SingleOrDefault(p => p.names.Contains("ExampleProjectNs"));
             Assert.True(File.Exists(exampleProj.path));
             Assert.Contains("ExampleProject", exampleProj.names);
             Assert.Contains("ExampleProjectAsm", exampleProj.names);
@@ -37,7 +37,7 @@ namespace DockerizedTesting.Tests.ImageProviders
         }
 
         [Fact]
-        void GetPathOfDockerProjectReturnsNullWhenNotFound()
+        public void GetPathOfDockerProjectReturnsNullWhenNotFound()
         {
             var projectLocator = new ProjectLocator();
             Assert.Null(projectLocator.GetDockerProject(Guid.NewGuid().ToString()));

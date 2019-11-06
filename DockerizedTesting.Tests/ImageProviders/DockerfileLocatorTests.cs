@@ -21,7 +21,6 @@ namespace DockerizedTesting.Tests.ImageProviders
         [InlineData("label.with.equals", "foo=bar")]
         [InlineData("foo", "bar")]
         [InlineData("bar", "baz")]
-        [InlineData("foo==bar", "true")]
         [Theory]
         public void ReturnsPathIfDockerFileFound(string key, string value)
         {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -19,33 +20,33 @@ namespace DockerizedTesting.ImageProviders
         private readonly ImageBuildParameters buildParameters;
 
         /// <summary>
-        /// Builds an image from a Dockerfile in the solution's folder with a matching "project" label
+        /// Builds an image from a Dockerfile in the solution's folder with a matching "project" label.
         /// </summary>
         /// <param name="projectName">Value of the project label</param>
         /// <param name="contextRelativeToDockerfile">Directory to build the docker file from (normally "." or "..")</param>
         /// <param name="buildParameters">Optional parameters</param>
         /// <param name="locator">Locates Dockerfile</param>
         public DockerfileImageProvider(string projectName, string contextRelativeToDockerfile, ImageBuildParameters buildParameters = null, IDockerfileLocator locator = null)
-        :this(new KeyValuePair<string, string>("project", projectName), contextRelativeToDockerfile, buildParameters, locator )
+        : this(new KeyValuePair<string, string>("project", projectName), contextRelativeToDockerfile, buildParameters, locator)
         {
 
         }
-        
+
         /// <summary>
-        /// Builds an image from a Dockerfile in the solution's folder with a matching label
+        /// Builds an image from a Dockerfile in the solution's folder with a matching label.
         /// </summary>
         /// <param name="label">Label to match</param>
         /// <param name="contextRelativeToDockerfile">Directory to build the docker file from (normally "." or "..")</param>
         /// <param name="buildParameters">Optional parameters</param>
         /// <param name="locator">Locates Dockerfile</param>
-        public DockerfileImageProvider(KeyValuePair<string,string> label, string contextRelativeToDockerfile, ImageBuildParameters buildParameters = null, IDockerfileLocator locator = null)
-        :this((locator ?? new DockerfileLocator()).GetDockerfile(label), contextRelativeToDockerfile,buildParameters)
+        public DockerfileImageProvider(KeyValuePair<string, string> label, string contextRelativeToDockerfile, ImageBuildParameters buildParameters = null, IDockerfileLocator locator = null)
+        : this((locator ?? new DockerfileLocator()).GetDockerfile(label), contextRelativeToDockerfile, buildParameters)
         {
-            
+
         }
 
         /// <summary>
-        /// Builds an image from a Dockerfile. If possible don't use this approach as it can be brittle
+        /// Builds an image from a Dockerfile. If possible don't use this approach as it can be brittle.
         /// </summary>
         /// <param name="dockerFile">Dockerfile to build</param>
         /// <param name="contextRelativeToDockerfile">Directory to build the docker file from (normally "." or "..")</param>
@@ -55,9 +56,7 @@ namespace DockerizedTesting.ImageProviders
             this.buildParameters = buildParameters ??
                                    new ImageBuildParameters
                                    {
-                                       Remove = true,
-                                       Tags = new[]
-                                           {"dockerized_testing_" + Regex.Replace(dockerFile.FullName.ToLower(), "[^a-z0-9]", "_").Trim('_')}
+                                       Remove = true
                                    };
             this.dockerfilePath = dockerFile.FullName;
             if (!File.Exists(this.dockerfilePath))
@@ -139,6 +138,20 @@ namespace DockerizedTesting.ImageProviders
                 .Where(s => s.Length > 0);
         }
 
+        private static string getHash(Stream str)
+        {
+            using (var sha1 = new SHA1Managed())
+            {
+                var hash = sha1.ComputeHash(str);
+                str.Position = 0;
+                return Convert.ToBase64String(hash)
+                    .ToLower()
+                    .Replace("+", string.Empty)
+                    .Replace("/", string.Empty)
+                    .Replace("=", string.Empty);
+            }
+        }
+
         public async Task<string> GetImage(IDockerClient dockerClient)
         {
             this.buildParameters.Dockerfile = this.dockerfilePath
@@ -147,18 +160,21 @@ namespace DockerizedTesting.ImageProviders
 
             var tarball = createTarballForDockerfileDirectory(this.dockerContextPath, new[] { this.dockerfilePath });
 
-            string tag = this.buildParameters.Tags.First();
+            string tag = "dockerized_testing_" + Regex.Replace(this.dockerfilePath.ToLower(), "[^a-z0-9]", "_").Trim('_') + ":" +
+                         getHash(tarball);
+            this.buildParameters.Tags = new[] { tag };
+
             try
             {
-                using (var result =
-                    await dockerClient.Images.BuildImageFromDockerfileAsync(tarball, this.buildParameters))
+                using (var result = await dockerClient.Images.BuildImageFromDockerfileAsync(tarball, this.buildParameters))
                 {
-                    var image = await dockerClient.Images.ListImagesAsync(new ImagesListParameters {MatchName = tag});
-                    if (!image.Any())
+
+                    using (var reader = new StreamReader(result))
                     {
-                        using (var reader = new StreamReader(result))
+                        string resultContent = reader.ReadToEnd();
+                        if (!await tagExists(dockerClient, tag))
                         {
-                            throw new DockerBuildFailedException(reader.ReadToEnd());
+                            throw new DockerBuildFailedException(resultContent);
                         }
                     }
 
@@ -169,6 +185,23 @@ namespace DockerizedTesting.ImageProviders
             {
                 throw new DockerBuildFailedException(ex);
             }
+        }
+
+        private static async Task<bool> tagExists(IDockerClient dockerClient, string tag)
+        {
+            //TODO: I think we dont need to delay now that we read the stream
+            int attempts = 0;
+            do
+            {
+                var images = await dockerClient.Images.ListImagesAsync(new ImagesListParameters());
+                if (images.Any(i => i.RepoTags.Contains(tag)))
+                {
+                    return true;
+                }
+                await Task.Delay(TimeSpan.FromSeconds(1));
+            } while (attempts++ < 5);
+
+            return false;
         }
     }
 }

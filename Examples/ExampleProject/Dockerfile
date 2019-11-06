@@ -5,7 +5,6 @@ EXPOSE 443
 LABEL project="foo"
 LABEL "label.with.equals"="foo=bar"
 LABEL "foo"="bar" "bar"="baz" "bar"="ignored"
-LABEL "foo==bar"="true"
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.0-buster AS build
 WORKDIR /src

@@ -10,6 +10,7 @@
     <PackageProjectUrl>https://github.com/devjoes/DockerizedTesting</PackageProjectUrl>
     <RepositoryUrl>https://github.com/devjoes/DockerizedTesting</RepositoryUrl>
     <PackageTags>docker kafka zookeeper unittesting testing</PackageTags>
+    <Version>1.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
