@@ -14,18 +14,20 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.101
-    - name: Setup NuGet.exe for use with actions
-      uses: NuGet/setup-nuget@v1.0.2
-    - name: Fix nuget binary
-      run: chmod +x `whereis nuget.exe | sed 's/nuget:\s//'`
     - name: Remove .sqlproj
       run: dotnet sln DockerizedTesting.sln remove Examples/ExampleDatabase*/*.*proj
+      
     - name: Install dependencies
       run: dotnet restore
     - name: Build
       run: dotnet build --configuration Release --no-restore
     - name: Test
       run: dotnet test --no-restore --verbosity normal
+      
+    - name: Setup NuGet.exe for use with actions
+      uses: NuGet/setup-nuget@v1.0.2
+    - name: Fix nuget binary
+      run: chmod +x `whereis nuget.exe | sed 's/nuget:\s//'`
     - name: Pack
       run: dotnet pack --no-restore --verbosity normal -o ./nuget
     - name: Publish
