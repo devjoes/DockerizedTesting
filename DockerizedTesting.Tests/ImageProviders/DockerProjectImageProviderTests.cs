@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Docker.DotNet.Models;
+using DockerizedTesting.Containers;
 using DockerizedTesting.ImageProviders;
 using Moq;
 using Xunit;

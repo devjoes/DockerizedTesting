@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Amazon.Runtime;
 using Amazon.S3;
 using Amazon.S3.Model;
+using DockerizedTesting.Containers;
 using Xunit;
 
 namespace DockerizedTesting.S3.Tests
@@ -61,36 +62,35 @@ namespace DockerizedTesting.S3.Tests
             }
         }
 
-        [Fact]
-        public async Task ContainersAreRemovedOnShutdown()
-        {
-            int rnd = new Random().Next(10000, 12000 - 1);
+        //[Fact]
+        //public async Task ContainersAreRemovedOnShutdown()
+        //{
+        //    int rnd = new Random().Next(10000, 12000 - 1);
 
-            async Task<string> StartStopContainer()
-            {
-                var fixture = new S3Fixture();
-                var options = new S3FixtureOptionsWithOwnHost();
-                options.ContainerHost.RemoveContainersOnExit = true;
-                // This ensures that the container will be unique and not being used by a diff test.
-                fixture.Ports[0] = rnd;
-                await fixture.Start(options);
-                Assert.True(fixture.ContainerStarting);
-                Assert.True(fixture.ContainerStarted);
-                string id = fixture.ContainerId;
-                await Task.Delay(1000);
-                fixture.Dispose();
-                await Task.Delay(1000);
-                options.ContainerHost.Dispose();
-                await Task.Delay(1000);
-                return id;
-            }
+        //    async Task<string> StartStopContainer()
+        //    {
+        //        var fixture = new S3Fixture();
+        //        var options = new S3FixtureOptionsWithOwnHost();
+        //        // This ensures that the container will be unique and not being used by a diff test.
+        //        fixture.Ports[0] = rnd;
+        //        await fixture.Start(options);
+        //        Assert.True(fixture.ContainerStarting);
+        //        Assert.True(fixture.ContainerStarted);
+        //        string id = fixture.ContainerId;
+        //        await Task.Delay(1000);
+        //        fixture.Dispose();
+        //        await Task.Delay(1000);
+        //        options.ContainerHost.Dispose();
+        //        await Task.Delay(1000);
+        //        return id;
+        //    }
 
-            var id1 = await StartStopContainer();
-            await Task.Delay(5000);
-            var id2 = await StartStopContainer();
+        //    var id1 = await StartStopContainer();
+        //    await Task.Delay(5000);
+        //    var id2 = await StartStopContainer();
 
-            Assert.NotEqual(id1, id2);
-        }
+        //    Assert.NotEqual(id1, id2);
+        //}
 
         private async Task<S3Fixture> hitS3(S3Fixture fixture)
         {
@@ -111,19 +111,6 @@ namespace DockerizedTesting.S3.Tests
             await s3Client.ListBucketsAsync(cts.Token);
             await s3Client.DeleteBucketAsync(bucketName, cts.Token);
             return fixture;
-        }
-
-        public class S3FixtureOptionsWithOwnHost : S3FixtureOptions
-        {
-            public S3FixtureOptionsWithOwnHost()
-            {
-                var ctor = typeof(ContainerHost).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance,
-                    null, new Type[0],
-                    null);
-                this.ContainerHost = (IContainerHost)ctor.Invoke(null);
-            }
-
-            public override IContainerHost ContainerHost { get; }
         }
 
     }

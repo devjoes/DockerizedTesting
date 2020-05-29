@@ -9,7 +9,7 @@ namespace DockerizedTesting
 {
     public static class Utils
     {
-        internal static int MinPort = 12000;
+        public const int MinPort = 12000;
         
         public static HostConfig HostWithBoundPorts(int[] hostPorts, params int[] containerPorts)
             => new HostConfig

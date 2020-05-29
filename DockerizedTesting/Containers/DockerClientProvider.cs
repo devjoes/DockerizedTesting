@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using Docker.DotNet;
 
-namespace DockerizedTesting
+namespace DockerizedTesting.Containers
 {
     public interface IDockerClientProvider
     {
@@ -10,11 +10,11 @@ namespace DockerizedTesting
         Uri DockerUri { get; }
     }
 
-    public class DockerClientProvider:IDockerClientProvider
+    public class DockerClientProvider : IDockerClientProvider
     {
         public virtual DockerClient GetDockerClient() =>
             new DockerClientConfiguration(this.DockerUri).CreateClient();
-        
+
         public virtual Uri DockerUri =>
             new Uri(
                 RuntimeInformation.IsOSPlatform(OSPlatform.Windows)

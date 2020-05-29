@@ -33,9 +33,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExampleProject", "Examples\
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "ExampleDatabase", "Examples\ExampleDatabase\ExampleDatabase.sqlproj", "{BA430B1E-C7CB-4F10-95D2-8EDD88F7305F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleProject.Tests", "Examples\ExampleProject.Tests\ExampleProject.Tests.csproj", "{9E56917C-8121-4341-A325-170689575373}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExampleProject.Tests", "Examples\ExampleProject.Tests\ExampleProject.Tests.csproj", "{9E56917C-8121-4341-A325-170689575373}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleDatabase.Tests", "Examples\ExampleDatabase.Tests\ExampleDatabase.Tests.csproj", "{9AF444D7-8A0D-4FD5-B599-35F5AC11DB4D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExampleDatabase.Tests", "Examples\ExampleDatabase.Tests\ExampleDatabase.Tests.csproj", "{9AF444D7-8A0D-4FD5-B599-35F5AC11DB4D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DockerizedTesting.RabbitMQ", "DockerizedTesting.RabbitMQ\DockerizedTesting.RabbitMQ.csproj", "{6C6B04FD-25F5-41EF-AF2C-2157C53679A7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DockerizedTesting.RabbitMQ.Tests", "DockerizedTesting.RabbitMQ.Tests\DockerizedTesting.RabbitMQ.Tests.csproj", "{D4BC5275-C599-44A1-962A-1F23A08BD49B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -109,6 +113,14 @@ Global
 		{9AF444D7-8A0D-4FD5-B599-35F5AC11DB4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9AF444D7-8A0D-4FD5-B599-35F5AC11DB4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9AF444D7-8A0D-4FD5-B599-35F5AC11DB4D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C6B04FD-25F5-41EF-AF2C-2157C53679A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C6B04FD-25F5-41EF-AF2C-2157C53679A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C6B04FD-25F5-41EF-AF2C-2157C53679A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C6B04FD-25F5-41EF-AF2C-2157C53679A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4BC5275-C599-44A1-962A-1F23A08BD49B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4BC5275-C599-44A1-962A-1F23A08BD49B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4BC5275-C599-44A1-962A-1F23A08BD49B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4BC5275-C599-44A1-962A-1F23A08BD49B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
