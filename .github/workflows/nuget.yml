@@ -1,5 +1,4 @@
-name: .NET Core
-
+name: Nuget
 on:
   push:
     branches: [ master ]
