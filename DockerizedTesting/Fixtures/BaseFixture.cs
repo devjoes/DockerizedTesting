@@ -47,11 +47,17 @@ namespace DockerizedTesting
         {
             this.ContainerStarted = false;
             int attempts = 0;
+            var sw = System.Diagnostics.Stopwatch.StartNew();
             do
             {
                 this.ContainerStarted = await this.IsContainerRunning(ports);
                 await Task.Delay(this.Options.DelayMs);
             } while (!this.ContainerStarted && attempts++ <= this.Options.MaxRetries);
+            sw.Stop();
+            if (!this.ContainerStarted)
+            {
+                throw new TimeoutException($"Container failed to start after {sw.Elapsed} ({this.Options.MaxRetries} attempts)");
+            }
         }
 
         protected async Task<string> StartContainer(int[] ports)
@@ -71,7 +77,6 @@ namespace DockerizedTesting
             this.ContainerStarting = true;
             this.ContainerId = await this.StartContainer(this.Ports);
             await this.WaitForContainer(this.Ports);
-            this.ContainerStarted = true;
         }
 
         public bool IsDisposed { get; protected set; }
