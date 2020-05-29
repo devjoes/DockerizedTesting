@@ -52,6 +52,7 @@ namespace DockerizedTesting.RabbitMQ
             return connectionFactory;
         }
 
+        private int success = 0;
         protected override async Task<bool> IsContainerRunning(int[] ports)
         {
             try
@@ -68,10 +69,12 @@ namespace DockerizedTesting.RabbitMQ
 
                     }
                 }
-                return await Task.FromResult(true);
+                this.success++;
+                return await Task.FromResult(this.success >= 5); // Rabbit seems to work then stop?
             }
             catch
             {
+                this.success = 0;
                 return await Task.FromResult(false);
             }
         }
