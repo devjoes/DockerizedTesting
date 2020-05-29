@@ -2,8 +2,6 @@ name: Nuget
 on:
   push:
     branches: [ master ]
-  pull_request:
-    branches: [ master ]
 
 jobs:
   build:
@@ -16,8 +14,7 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.101
-    - name: Download latest NuGet (cross-platform)
-      uses: olegtarasov/download-nuget@v1
+    - run: nuget.exe --help      
     - name: Remove .sqlproj
       run: dotnet sln DockerizedTesting.sln remove Examples/ExampleDatabase*/*.*proj
     - name: Install dependencies
