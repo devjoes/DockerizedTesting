@@ -18,7 +18,6 @@ jobs:
       uses: NuGet/setup-nuget@v1.0.2
     - name: Fix nuget binary
       run: chmod +x `whereis nuget.exe | sed 's/nuget:\s//'`
-    - run: nuget.exe --help
     - name: Remove .sqlproj
       run: dotnet sln DockerizedTesting.sln remove Examples/ExampleDatabase*/*.*proj
     - name: Install dependencies
