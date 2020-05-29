@@ -1,0 +1,39 @@
+name: .NET Core
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.101
+    - name: Remove .sqlproj
+      run: dotnet sln DockerizedTesting.sln remove Examples/ExampleDatabase*/*.*proj
+    - name: Install dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+    - name: Test
+      run: dotnet test --no-restore --verbosity normal
+    - name: Publish
+      run: dotnet publish --no-restore --verbosity normal
+    - name: Publish NuGet
+      uses: brandedoutcast/publish-nuget@v2.5.2
+      with:
+        # Filepath of the project to be packaged, relative to root of repository
+        PROJECT_FILE_PATH: DockerizedTesting/DockerizedTesting.csproj
+        # API key to authenticate with NuGet server
+        NUGET_KEY: ${{ secrets.NUGET_KEY }}
+        # Flag to toggle pushing symbols along with nuget package to the server, disabled by default
+        INCLUDE_SYMBOLS: true
+      
