@@ -15,8 +15,8 @@ namespace ExampleProjectNs
                     webBuilder.Configure(a =>
                     {
                         a.UseRouting();
-                        a.UseEndpoints(r => r.MapGet("/", 
-                            r => r.Response.WriteAsync("Hello world!")));
+                        a.UseEndpoints(r => r.MapGet("/", new RequestDelegate(
+                            c => c.Response.WriteAsync("Hello world!"))));
                     });
                 }).Build().Run();
         }
