@@ -16,6 +16,8 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.101
+    - name: Download latest NuGet (cross-platform)
+      uses: olegtarasov/download-nuget@v1
     - name: Remove .sqlproj
       run: dotnet sln DockerizedTesting.sln remove Examples/ExampleDatabase*/*.*proj
     - name: Install dependencies
@@ -24,5 +26,9 @@ jobs:
       run: dotnet build --configuration Release --no-restore
     - name: Test
       run: dotnet test --no-restore --verbosity normal
+    - name: Pack
+      run: dotnet pack --no-restore --verbosity normal -o ./nuget
     - name: Publish
-      run: dotnet publish --no-restore --verbosity normal     
+      run: nuget.exe push -ApiKey "$NUGET_KEY" -SkipDuplicate -NonInteractive -Source "https://www.nuget.org/" "nuget/"
+      env:
+        NUGET_KEY: ${{ secrets.NUGET_KEY }}
