@@ -7,8 +7,16 @@ using System.Threading.Tasks;
 using Docker.DotNet;
 using Docker.DotNet.Models;
 
-namespace DockerizedTesting
+namespace DockerizedTesting.Containers
 {
+
+    /// <summary>
+    /// This class takes care of removing containers, volumes and generally cleaning up. It should be a singleton.
+    /// </summary>
+    public interface IContainerHost : IDisposable
+    {
+        ConcurrentDictionary<string, Uri> ContainerIds { get; }
+    }
     public class ContainerHost : IContainerHost
     {
         private ContainerHost()
@@ -25,14 +33,11 @@ namespace DockerizedTesting
 
         public static ContainerHost Instance { get; set; } = new ContainerHost();
 
-
-
         public ConcurrentDictionary<string, Uri> ContainerIds { get; }
-        public bool RemoveContainersOnExit { get; set; } = true;
 
         private void removeContainers()
         {
-            Console.WriteLine("Cleaning up: " +string.Join(", ", this.ContainerIds.Keys));
+            Console.WriteLine("Cleaning up: " + string.Join(", ", this.ContainerIds.Keys));
             var clients = this.ContainerIds.Values.Distinct().ToDictionary(
                 k => k,
                 v => new DockerClientConfiguration(v).CreateClient());
@@ -72,10 +77,6 @@ namespace DockerizedTesting
             if (disposing)
             {
                 GC.SuppressFinalize(this);
-            }
-            if (!this.RemoveContainersOnExit)
-            {
-                return;
             }
             this.removeContainers();
         }

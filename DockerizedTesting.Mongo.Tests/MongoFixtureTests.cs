@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using DockerizedTesting.Containers;
 using MongoDB.Driver;
 using Xunit;
 
@@ -52,35 +53,34 @@ namespace DockerizedTesting.Mongo.Tests
             Assert.True(ex.InnerException is MongoConnectionException || ex.InnerException is TimeoutException);
         }
 
-        [Fact]
-        public async Task ContainersAreRemovedOnShutdown()
-        {
-            int rnd = new Random().Next(10000,12000-1);
-            async Task<string> StartStopContainer()
-            {
-                var fixture = new MongoFixture();
-                var options = new MongoFixtureOptionsWithOwnHost();
-                options.ContainerHost.RemoveContainersOnExit = true;
-                // This ensures that the container will be unique and not being used by a diff test.
-                fixture.Ports[0] = rnd;
-                await fixture.Start(options);
-                Assert.True(fixture.ContainerStarting);
-                Assert.True(fixture.ContainerStarted);
-                string id = fixture.ContainerId;
-                await Task.Delay(1000);
-                fixture.Dispose();
-                await Task.Delay(1000);
-                options.ContainerHost.Dispose();
-                await Task.Delay(1000);
-                return id;
-            }
+        //[Fact]
+        //public async Task ContainersAreRemovedOnShutdown()
+        //{
+        //    int rnd = new Random().Next(10000,12000-1);
+        //    async Task<string> StartStopContainer()
+        //    {
+        //        var fixture = new MongoFixture();
+        //        var options = new MongoFixtureOptionsWithOwnHost();
+        //        // This ensures that the container will be unique and not being used by a diff test.
+        //        fixture.Ports[0] = rnd;
+        //        await fixture.Start(options);
+        //        Assert.True(fixture.ContainerStarting);
+        //        Assert.True(fixture.ContainerStarted);
+        //        string id = fixture.ContainerId;
+        //        await Task.Delay(1000);
+        //        fixture.Dispose();
+        //        await Task.Delay(1000);
+        //        options.ContainerHost.Dispose();
+        //        await Task.Delay(1000);
+        //        return id;
+        //    }
 
-            var id1 = await StartStopContainer();
-            await Task.Delay(5000);
-            var id2 = await StartStopContainer();
+        //    var id1 = await StartStopContainer();
+        //    await Task.Delay(5000);
+        //    var id2 = await StartStopContainer();
 
-            Assert.NotEqual(id1,id2);
-        }
+        //    Assert.NotEqual(id1,id2);
+        //}
 
         [Fact]
         public async Task ThreadSafetyTest() =>
@@ -105,17 +105,6 @@ namespace DockerizedTesting.Mongo.Tests
             public int Bar { get; set; }
         }
 
-        public class MongoFixtureOptionsWithOwnHost:MongoFixtureOptions
-        {
-            public MongoFixtureOptionsWithOwnHost()
-            {
-                var ctor = typeof(ContainerHost).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance,
-                    null, new Type[0],
-                    null);
-                this.ContainerHost = (IContainerHost) ctor.Invoke(null);
-            }
-            public override IContainerHost ContainerHost { get; }
-        }
     }
 
 }
