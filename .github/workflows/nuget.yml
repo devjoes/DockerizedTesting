@@ -14,7 +14,9 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.101
-    - run: nuget --help      
+    - name: Setup NuGet.exe for use with actions
+      uses: NuGet/setup-nuget@v1.0.2
+    - run: nuget.exe --help      
     - name: Remove .sqlproj
       run: dotnet sln DockerizedTesting.sln remove Examples/ExampleDatabase*/*.*proj
     - name: Install dependencies
