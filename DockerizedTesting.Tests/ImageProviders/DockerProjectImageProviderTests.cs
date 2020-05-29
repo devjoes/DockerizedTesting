@@ -15,8 +15,7 @@ namespace DockerizedTesting.Tests.ImageProviders
         [Fact]
         public async Task GetImageThrowsWhenProjectCantBeFound()
         {
-            var file = new FileInfo(Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".fail.tmp"));
-            file.Create().Dispose();
+            var file = new FileInfo(Path.GetTempFileName());
             file.Delete();
             var imageSource = new DockerProjectImageProvider(file);
             await Assert.ThrowsAsync<FileNotFoundException>(async () => await imageSource.GetImage(null));
@@ -32,9 +31,7 @@ namespace DockerizedTesting.Tests.ImageProviders
         [Fact]
         public async Task GetImageThrowsWhenProjectFailsToBuild()
         {
-            var file = new FileInfo(Path.Combine(Path.GetTempPath(), Guid.NewGuid()+".fail.tmp"));
-            file.Create().Dispose();
-            //var file = new FileInfo(Path.GetTempFileName());
+            var file = new FileInfo(Path.GetTempFileName());
             try
             {
                 var imageSource = new DockerProjectImageProvider(file);
