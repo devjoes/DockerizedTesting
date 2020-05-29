@@ -68,11 +68,11 @@ namespace DockerizedTesting.RabbitMQ
 
                     }
                 }
-                return true;
+                return await Task.FromResult(true);
             }
             catch
             {
-                return false;
+                return await Task.FromResult(false);
             }
         }
 
