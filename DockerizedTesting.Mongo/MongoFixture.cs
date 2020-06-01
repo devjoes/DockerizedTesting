@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Docker.DotNet.Models;
+using DockerizedTesting.Models;
 using MongoDB.Driver;
 
 namespace DockerizedTesting.Mongo
@@ -17,7 +18,8 @@ namespace DockerizedTesting.Mongo
             return this.Start(new MongoFixtureOptions());
         }
         
-        protected string GetMongoConnectionString(int port) => $"mongodb://localhost:{port}?connectTimeoutMS=2000";
+        protected string GetMongoConnectionString(HostEndpoint endpoint) =>
+            $"mongodb://{endpoint.Hostname}:{endpoint.Port}?connectTimeoutMS=2000";
 
         protected override CreateContainerParameters GetContainerParameters(int[] ports)
         {
@@ -37,11 +39,11 @@ namespace DockerizedTesting.Mongo
             };
         }
 
-        protected override async Task<bool> IsContainerRunning(int[] ports)
+        protected override async Task<bool> IsContainerRunning(HostEndpoint[] endpoints)
         {
             try
             {
-                var connectionString = this.GetMongoConnectionString(ports.Single());
+                var connectionString = this.GetMongoConnectionString(endpoints.Single());
                 var client = new MongoClient(connectionString);
                 await (await client.ListDatabaseNamesAsync()).ToListAsync();
                 return true;

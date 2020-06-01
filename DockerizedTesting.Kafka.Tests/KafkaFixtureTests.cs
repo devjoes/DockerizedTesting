@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
+using DockerizedTesting.Models;
 using Xunit;
 
 namespace DockerizedTesting.Kafka.Tests
@@ -37,7 +38,7 @@ namespace DockerizedTesting.Kafka.Tests
 
             CancellationTokenSource cts = new CancellationTokenSource();
             var consume = Task.Run(() => this.consumeFromTopic(KafkaTopicName, cts.Token), cts.Token);
-            await this.publishToTopic(KafkaTopicName, messagesToSend, this.fixture.Kafka.Ports.First());
+            await this.publishToTopic(KafkaTopicName, messagesToSend, this.fixture.Kafka.Endpoints.First());
             await Task.Delay(TimeSpan.FromSeconds(10));
             cts.Cancel();
             int messagesConsumed = await consume;
@@ -61,7 +62,7 @@ namespace DockerizedTesting.Kafka.Tests
             await Task.WhenAny(new[]
             {
                 timeout,
-                this.publishToTopic(KafkaTopicName, 1, kafkaFixture.KafkaPort)
+                this.publishToTopic(KafkaTopicName, 1, kafkaFixture.KafkaEndpoint)
             });
 
             Assert.True(timeout.IsCompletedSuccessfully, "Published to Kafka despite it being Disposed");
@@ -73,7 +74,7 @@ namespace DockerizedTesting.Kafka.Tests
             var conf = new ConsumerConfig
             {
                 GroupId = "test-consumer-group",
-                BootstrapServers = this.fixture.Ip + ":" + this.fixture.KafkaPort,
+                BootstrapServers = this.fixture.KafkaEndpoint.ToString(),
                 AutoOffsetReset = AutoOffsetReset.Earliest
             };
 
@@ -98,9 +99,9 @@ namespace DockerizedTesting.Kafka.Tests
             }
         }
 
-        private async Task publishToTopic(string kafkaTopicName, int messagesToSend, int port)
+        private async Task publishToTopic(string kafkaTopicName, int messagesToSend, HostEndpoint endpoint)
         {
-            var conf = new ProducerConfig { BootstrapServers = this.fixture.Ip + ":" + port };
+            var conf = new ProducerConfig { BootstrapServers = endpoint.ToString() };
 
             using (var p = new ProducerBuilder<Null, string>(conf).Build())
             {

@@ -5,6 +5,7 @@ using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Threading.Tasks;
 using Docker.DotNet.Models;
+using DockerizedTesting.Models;
 using RabbitMQ.Client;
 
 namespace DockerizedTesting.RabbitMQ
@@ -39,21 +40,21 @@ namespace DockerizedTesting.RabbitMQ
                     })
                 })
             {
-                HostConfig = Utils.HostWithBoundPorts(ports, containerPorts)
+                HostConfig = Utils.HostWithBoundPorts(ports.ToArray(), containerPorts)
             };
         }
 
         public ConnectionFactory SetupConnectionFactory(ConnectionFactory connectionFactory)
         {
-            connectionFactory.HostName = "localhost";
-            connectionFactory.Port = Ports.First();
+            (connectionFactory.HostName, connectionFactory.Port) = Endpoints.First();
+            connectionFactory.Port = Endpoints.First().Port;
             connectionFactory.UserName = this.Options.UserName;
             connectionFactory.Password = this.Options.Password;
             return connectionFactory;
         }
 
         private int success = 0;
-        protected override async Task<bool> IsContainerRunning(int[] ports)
+        protected override async Task<bool> IsContainerRunning(HostEndpoint[] endpoints)
         {
             try
             {

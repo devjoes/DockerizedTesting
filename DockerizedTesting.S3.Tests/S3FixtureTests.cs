@@ -56,7 +56,7 @@ namespace DockerizedTesting.S3.Tests
             {
                 await Assert.ThrowsAsync<HttpRequestException>(async () =>
                 {
-                    var result = await client.GetAsync("http://localhost:" + fixture.Ports.Single());
+                    var result = await client.GetAsync("http://" + fixture.Endpoints.Single().ToString());
                     result.EnsureSuccessStatusCode();
                 });
             }
@@ -100,7 +100,7 @@ namespace DockerizedTesting.S3.Tests
                 new AnonymousAWSCredentials(),
                 new AmazonS3Config
                 {
-                    ServiceURL = "http://127.0.0.1:" + fixture.Ports.Single(),
+                    ServiceURL = "http://" + fixture.Endpoints.Single().ToString(),
                     ForcePathStyle = true,
                     Timeout = TimeSpan.FromSeconds(5)
                 });

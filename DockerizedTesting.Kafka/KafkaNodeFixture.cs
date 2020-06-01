@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Confluent.Kafka;
 using Confluent.Kafka.Admin;
 using Docker.DotNet.Models;
+using DockerizedTesting.Models;
 using Config = Docker.DotNet.Models.Config;
 
 namespace DockerizedTesting.Kafka
@@ -56,7 +57,7 @@ namespace DockerizedTesting.Kafka
         {
             const int kafkaPort = 9092;
 
-            var hostConfig = Utils.HostWithBoundPorts(ports, kafkaPort);
+            var hostConfig = Utils.HostWithBoundPorts(ports.ToArray(), kafkaPort);
             hostConfig.NetworkMode = this.NetworkName;
 
             return new CreateContainerParameters(
@@ -79,11 +80,12 @@ namespace DockerizedTesting.Kafka
             };
         }
 
-        protected override  Task<bool> IsContainerRunning(int[] ports)
+        protected override  Task<bool> IsContainerRunning(HostEndpoint[] endpoints)
         {
+            //TODO: ????
             return Task.FromResult(true);
         }
 
-        public string NetworkName { get; set; }
+        public string NetworkName { get; set; } //TODO: This will have to change
     }
 }

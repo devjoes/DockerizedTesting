@@ -10,6 +10,7 @@ using Amazon.Runtime;
 using Amazon.S3;
 using Amazon.S3.Model;
 using Docker.DotNet.Models;
+using DockerizedTesting.Models;
 
 namespace DockerizedTesting.S3
 {
@@ -69,7 +70,7 @@ namespace DockerizedTesting.S3
             };
         }
 
-        protected override async Task<bool> IsContainerRunning(int[] ports)
+        protected override async Task<bool> IsContainerRunning(HostEndpoint[] endpoints)
         {
             try
             {
@@ -77,7 +78,7 @@ namespace DockerizedTesting.S3
                     new AnonymousAWSCredentials(),
                     new AmazonS3Config
                     {
-                        ServiceURL = "http://127.0.0.1:" + ports.Single(),
+                        ServiceURL = "http://" + endpoints.Single().ToString(),
                         ForcePathStyle = true,
                         Timeout = TimeSpan.FromSeconds(3),
                         ReadWriteTimeout = TimeSpan.FromSeconds(3),

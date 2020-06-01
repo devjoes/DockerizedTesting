@@ -48,6 +48,10 @@ namespace DockerizedTesting.ImageProviders
 
         private string buildDockerProject(FileInfo fileInfo)
         {
+            if (!Utils.CommandExists("dotnet"))
+            {
+                new DockerBuildFailedException("Could not find 'dotnet' in PATH to build the project");
+            }
             if (fileInfo == null)
             {
                 throw new ArgumentNullException(nameof(fileInfo), "Could not find project (or project is does not support docker)");

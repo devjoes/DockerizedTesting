@@ -23,7 +23,7 @@ namespace ExampleDatabase.Tests
         [Fact]
         public async Task ReadValue()
         {
-            using (SqlConnection con = new SqlConnection(this.fixture.GetMsSqlConnectionString(this.fixture.Ports.Single(), "test")))
+            using (SqlConnection con = new SqlConnection(this.fixture.GetMsSqlConnectionString(this.fixture.Endpoints.Single(), "test")))
             {
                 await con.OpenAsync();
                 using (var cmd = new SqlCommand("SELECT Foo FROM Test WHERE Id = 1", con))

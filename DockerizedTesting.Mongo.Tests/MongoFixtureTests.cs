@@ -42,7 +42,7 @@ namespace DockerizedTesting.Mongo.Tests
             {
                 try
                 {
-                    await new MongoClient("mongodb://localhost:" + fixture.Ports.Single())
+                    await new MongoClient("mongodb://"+ fixture.Endpoints.Single().ToString())
                         .ListDatabaseNamesAsync();
                 }
                 catch (Exception e)
@@ -92,7 +92,7 @@ namespace DockerizedTesting.Mongo.Tests
         private async Task<MongoFixture> hitMongo(MongoFixture fixture)
         {
             await fixture.Start();
-            var db = new MongoClient("mongodb://localhost:" + fixture.Ports.Single())
+            var db = new MongoClient("mongodb://" + fixture.Endpoints.Single().ToString())
                 .GetDatabase(Guid.NewGuid().ToString());
             await db.CreateCollectionAsync("test");
             await db.GetCollection<Foo>("test")

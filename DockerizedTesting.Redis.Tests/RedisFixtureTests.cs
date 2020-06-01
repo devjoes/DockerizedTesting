@@ -38,14 +38,14 @@ namespace DockerizedTesting.Redis.Tests
             fixture.Dispose();
 
             await Assert.ThrowsAsync<RedisConnectionException>(async () =>
-                (await ConnectionMultiplexer.ConnectAsync("localhost:" + fixture.Ports.Single())).GetDatabase()
+                (await ConnectionMultiplexer.ConnectAsync(fixture.Endpoints.Single().ToString())).GetDatabase()
                 .SetAdd("foo", "bar"));
         }
 
         private async Task<RedisFixture> hitRedis(RedisFixture fixture)
         {
             await fixture.Start();
-            var db = (await ConnectionMultiplexer.ConnectAsync("localhost:" + fixture.Ports.Single())).GetDatabase();
+            var db = (await ConnectionMultiplexer.ConnectAsync(fixture.Endpoints.Single().ToString())).GetDatabase();
             db.SetAdd("foo", "bar");
             return fixture;
         }

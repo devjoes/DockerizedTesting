@@ -4,6 +4,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using Docker.DotNet.Models;
+using DockerizedTesting.Models;
 
 namespace DockerizedTesting.MsSql
 {
@@ -23,7 +24,8 @@ namespace DockerizedTesting.MsSql
             return base.Start(options);
         }
 
-        public string GetMsSqlConnectionString(int port, string database = "master") => $"Server=localhost,{port};Database={database};TrustServerCertificate=True;User Id=sa;Password={this.Options.SaPassword};Connect Timeout=5";
+        public string GetMsSqlConnectionString(HostEndpoint endpoint, string database = "master") => 
+            $"Server={endpoint.Hostname},{endpoint.Port};Database={database};TrustServerCertificate=True;User Id=sa;Password={this.Options.SaPassword};Connect Timeout=5";
 
         protected override CreateContainerParameters GetContainerParameters(int[] ports)
         {
@@ -44,11 +46,11 @@ namespace DockerizedTesting.MsSql
             };
         }
 
-        protected override async Task<bool> IsContainerRunning(int[] ports)
+        protected override async Task<bool> IsContainerRunning(HostEndpoint[] endpoints)
         {
             try
             {
-                var connectionString = this.GetMsSqlConnectionString(ports.Single());
+                var connectionString = this.GetMsSqlConnectionString(endpoints.Single());
                 var connection = new SqlConnection(connectionString);
                 await connection.OpenAsync();
                 var cmd = new SqlCommand("SELECT GETDATE()", connection);

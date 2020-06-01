@@ -1,4 +1,6 @@
-﻿using System;
+﻿using DockerizedTesting.Models;
+using System;
+using System.Net;
 
 namespace DockerizedTesting
 {
@@ -6,7 +8,7 @@ namespace DockerizedTesting
     {
         bool IsDisposed { get; }
         string ContainerId { get; }
-        int[] Ports { get; }
+        HostEndpoint[] Endpoints { get; }
         bool ContainerStarting { get; }
         bool ContainerStarted { get; }
         string UniqueContainerName { get; }

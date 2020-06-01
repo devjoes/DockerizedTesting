@@ -7,7 +7,7 @@ namespace DockerizedTesting.S3
 {
     public class S3FixtureOptions : FixtureOptions
     {
-        public override IDockerImageProvider ImageProvider { get; } = new DockerHubImageProvider("lphoward/fake-s3:latest");
+        public override IDockerImageProvider ImageProvider { get; } = new DockerRepoImageProvider("lphoward/fake-s3:latest");
         public string VolumePath { get; set; }
     }
 }

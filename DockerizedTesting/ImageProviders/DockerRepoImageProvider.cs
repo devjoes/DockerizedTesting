@@ -6,14 +6,16 @@ using Docker.DotNet.Models;
 
 namespace DockerizedTesting.ImageProviders
 {
-    public class DockerHubImageProvider : IDockerImageProvider
+    public class DockerRepoImageProvider : IDockerImageProvider
     {
         private readonly string image;
 
-        public DockerHubImageProvider(string image)
+        public DockerRepoImageProvider(string image)
         {
             this.image = image;
         }
+
+        public AuthConfig AuthConfig { get; set; } = new AuthConfig();
 
         public async Task<string> GetImage(IDockerClient dockerClient)
         {
@@ -24,7 +26,7 @@ namespace DockerizedTesting.ImageProviders
                 {
                     FromImage = splitImage.First(),
                     Tag = splitImage.Length == 1 ? "latest" : splitImage.Last()
-                }, new AuthConfig(), new Progress<JSONMessage>());
+                }, this.AuthConfig, new Progress<JSONMessage>());
             }
             return this.image;
         }

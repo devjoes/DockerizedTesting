@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Confluent.Kafka.Admin;
+using DockerizedTesting.Models;
 
 namespace DockerizedTesting.Kafka
 {
@@ -71,19 +72,18 @@ namespace DockerizedTesting.Kafka
         public bool ContainerStarted { get; set; }
         public bool ContainerStarting { get; set; }
 
-        public int KafkaPort => this.Kafka.Ports.Single();
-        public int ZooKeeperPort => this.ZooKeeper.Ports.Single();
-        public string Ip => this.Kafka.Ip;
+        public HostEndpoint KafkaEndpoint => this.Kafka.Endpoints.Single();
+        public HostEndpoint ZookeeperEndpoint => this.ZooKeeper.Endpoints.Single();
 
         private async Task<bool> connectToKafka()
         {
             try
             {
                 //var log = new BlockingCollection<string>();
-                int port = this.Kafka.Ports.Single();
+                var (host, port )= this.Kafka.Endpoints.Single();
                 var config = new AdminClientConfig
                 {
-                    BootstrapServers = this.Ip + ":" + port,
+                    BootstrapServers = host + ":" + port,
                 }; // + ports.First()};
 
                 using (var client = new AdminClientBuilder(config).Build())

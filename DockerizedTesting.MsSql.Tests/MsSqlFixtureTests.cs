@@ -22,8 +22,9 @@ namespace DockerizedTesting.MsSql.Tests
             Assert.True(this.fixture.ContainerStarting);
             Assert.True(this.fixture.ContainerStarted);
 
+            var endpoint = this.fixture.Endpoints.Single();
             var connection = new SqlConnection(
-                    $"Server=localhost,{this.fixture.Ports.Single()};Database=master;TrustServerCertificate=True;User Id=sa;Password={this.fixture.Options.SaPassword}");
+                    $"Server={endpoint.Hostname},{endpoint.Port};Database=master;TrustServerCertificate=True;User Id=sa;Password={this.fixture.Options.SaPassword}");
 
             await connection.OpenAsync();
             var cmd = new SqlCommand("SELECT 1+1", connection);

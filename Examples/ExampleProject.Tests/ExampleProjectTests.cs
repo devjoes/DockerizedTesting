@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Docker.DotNet.Models;
 using DockerizedTesting;
 using DockerizedTesting.ImageProviders;
+using DockerizedTesting.Models;
 using Xunit;
 
 namespace ExampleProject.Tests
@@ -23,7 +24,7 @@ namespace ExampleProject.Tests
         public async Task TestServer()
         {
             var client = new HttpClient();
-            string response = await client.GetStringAsync("http://localhost:" + this.fixture.Ports.Single());
+            string response = await client.GetStringAsync("http://" + this.fixture.Endpoints.Single().ToString());
             Assert.Equal("Hello world!", response);
         }
     }
@@ -52,12 +53,12 @@ namespace ExampleProject.Tests
             };
         }
 
-        protected override async Task<bool> IsContainerRunning(int[] ports)
+        protected override async Task<bool> IsContainerRunning(HostEndpoint[] endpoints)
         {
             var client = new HttpClient();
             try
             {
-                await client.GetStringAsync("http://localhost:" + ports.Single());
+                await client.GetStringAsync("http://"+endpoints.Single().ToString());
                 return true;
             }
             catch
