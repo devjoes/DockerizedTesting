@@ -36,7 +36,7 @@ namespace DockerizedTesting
             {
                 throw new ArgumentNullException(nameof(command));
             }
-            if(new[] { '/' }.Concat(Path.GetInvalidFileNameChars()).Any(command.Contains))
+            if (new[] { '/' }.Concat(Path.GetInvalidFileNameChars()).Any(command.Contains))
             {
                 throw new ArgumentException("Invalid filename", nameof(command));
             }
@@ -62,5 +62,20 @@ namespace DockerizedTesting
                 return true;
             }
         }
+
+        public static byte[] ReadPemKey(string key)
+            => Convert.FromBase64String(
+            string.Join(string.Empty,
+            key.Split('\n')
+                .Select(l => l.Replace("\r", string.Empty).Replace("\t", string.Empty)
+                .Replace(" ", string.Empty).Trim())
+                .Where(l => l.Length > 0 
+                    && l.ToCharArray().All(i =>
+                        (i >= 65 && i <= 90) || (i >= 97 && i <= 122) || (i >= 48 && i <= 57)
+                        || i == '+' || i == '/' || i == '='
+                ))
+
+               )
+            );
     }
 }

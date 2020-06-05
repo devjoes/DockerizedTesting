@@ -13,5 +13,7 @@ namespace DockerizedTesting.MsSql
         public MsSqlProduct Product { get; set; } = MsSqlProduct.Developer;
 
         public override int DelayMs => 2000;
+
+        public override int MaxRetries => 30;
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.ComTypes;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Docker.DotNet.Models;
 using DockerizedTesting.Models;
@@ -54,7 +55,7 @@ namespace DockerizedTesting.RabbitMQ
         }
 
         private int success = 0;
-        protected override async Task<bool> IsContainerRunning(HostEndpoint[] endpoints)
+        protected override async Task<bool> IsContainerRunning(HostEndpoint[] endpoints, CancellationToken cancellationToken)
         {
             try
             {

@@ -5,15 +5,19 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace DockerizedTesting.Containers
 {
-    public interface IContainerActions
+    public interface IContainerActions :IDisposable
     {
         Task KillZombieContainersBoundToPorts(int[] ports);
-        Task<string> StartContainer(CreateContainerParameters containerParams, IDockerImageProvider imageProvider, string containerName);
-        HostEndpoint[] GetEndpoints(int count);
+        Task<string> StartContainer(CreateContainerParameters containerParams, IDockerImageProvider imageProvider, string containerName, CancellationToken cancel = default);
+        HostEndpoint[] ReservePorts(int count);
         void StopContainer(string containerId);
+        Task DockerBridgeNetwork(bool enable, string preferredName = "dockerized_testing");
+        string GetDockerNetwork();
+        TokenWithStats GetTokenWithStats(TimeSpan timeout);
     }
 }

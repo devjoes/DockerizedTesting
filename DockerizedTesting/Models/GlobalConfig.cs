@@ -15,5 +15,10 @@ namespace DockerizedTesting.Models
             .AddSingleton<IContainerActions, LocalContainerActions>()
             .BuildServiceProvider());
 
+        /// <summary>
+        /// This is the default amount of time to wait for a container to be created 
+        /// (download image etc) if lots of tests run in parallel then it should be high
+        /// </summary>
+        public int DefaultCreationTimeoutMs { get; set; } = 300000;
     }
 }

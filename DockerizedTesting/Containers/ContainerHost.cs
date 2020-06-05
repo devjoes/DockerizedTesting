@@ -66,24 +66,23 @@ namespace DockerizedTesting.Containers
         }
 
         private bool disposed = false;
-        public void Dispose(bool disposing)
+
+        protected virtual void Dispose(bool disposing)
         {
+            //TODO: Thread safety
             if (this.disposed)
             {
                 return;
             }
-
             this.disposed = true;
-            if (disposing)
-            {
-                GC.SuppressFinalize(this);
-            }
             this.removeContainers();
+            
         }
 
         public void Dispose()
         {
             this.Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         ~ContainerHost()

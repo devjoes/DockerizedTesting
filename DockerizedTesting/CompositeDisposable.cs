@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace DockerizedTesting
 {
-    public sealed class CompositeDisposable : IReadOnlyCollection<IDisposable>, IDisposable
+    public sealed class CompositeDisposable : IReadOnlyCollection<IDisposable>, IDisposable, IAsyncDisposable
     {
         private List<IDisposable> disposables = new List<IDisposable>();
         public CompositeDisposable()
@@ -38,7 +40,8 @@ namespace DockerizedTesting
 
         private bool disposed = false;
         private object disposeLock = new object();
-        public void Dispose()
+
+        private IList<IDisposable> getItemsToDispose()
         {
             IList<IDisposable> toDispose = null;
 
@@ -51,15 +54,30 @@ namespace DockerizedTesting
                     disposables = null;
                 }
             }
+            return toDispose;
+        }
 
+        public void Dispose()
+        {
+            var toDispose = getItemsToDispose();
             if (toDispose == null)
             {
                 return;
             }
-            foreach (var d in toDispose)
+            foreach(var d in toDispose)
             {
                 d.Dispose();
             }
+        }
+
+        public async ValueTask DisposeAsync()
+        {
+            var toDispose = getItemsToDispose();
+            if (toDispose == null)
+            {
+                return;
+            }
+            await Task.WhenAll(toDispose.Select(d => Task.Run(() => d.Dispose())));
         }
     }
 }

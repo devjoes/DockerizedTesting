@@ -12,7 +12,7 @@ namespace DockerizedTesting.RabbitMQ.Tests
 
         public RabbitMqFixtureTests(RabbitMqFixture fixture)
         {
-            fixture.Start().Wait();
+            fixture.Start().GetAwaiter().GetResult();
             this.fixture = fixture;
         }
 

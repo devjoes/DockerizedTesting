@@ -105,7 +105,7 @@ namespace DockerizedTesting.S3.Tests
                     Timeout = TimeSpan.FromSeconds(5)
                 });
             var cts = new CancellationTokenSource();
-            cts.CancelAfter(6000);
+            cts.CancelAfter(30000);
             const string bucketName = "bar";
             await s3Client.PutBucketAsync(new PutBucketRequest { BucketName = bucketName }, cts.Token);
             await s3Client.ListBucketsAsync(cts.Token);

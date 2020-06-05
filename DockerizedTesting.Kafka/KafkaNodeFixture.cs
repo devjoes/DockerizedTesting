@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Confluent.Kafka.Admin;
@@ -80,7 +81,7 @@ namespace DockerizedTesting.Kafka
             };
         }
 
-        protected override  Task<bool> IsContainerRunning(HostEndpoint[] endpoints)
+        protected override  Task<bool> IsContainerRunning(HostEndpoint[] endpoints, CancellationToken cancellationToken)
         {
             //TODO: ????
             return Task.FromResult(true);

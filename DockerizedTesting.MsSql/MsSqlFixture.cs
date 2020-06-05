@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Docker.DotNet.Models;
 using DockerizedTesting.Models;
@@ -46,15 +47,15 @@ namespace DockerizedTesting.MsSql
             };
         }
 
-        protected override async Task<bool> IsContainerRunning(HostEndpoint[] endpoints)
+        protected override async Task<bool> IsContainerRunning(HostEndpoint[] endpoints, CancellationToken cancellationToken)
         {
             try
             {
                 var connectionString = this.GetMsSqlConnectionString(endpoints.Single());
                 var connection = new SqlConnection(connectionString);
-                await connection.OpenAsync();
+                await connection.OpenAsync(cancellationToken);
                 var cmd = new SqlCommand("SELECT GETDATE()", connection);
-                await cmd.ExecuteScalarAsync();
+                await cmd.ExecuteScalarAsync(cancellationToken);
                 return true;
             }
             catch

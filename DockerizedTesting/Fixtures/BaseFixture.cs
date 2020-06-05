@@ -5,6 +5,7 @@ using DockerizedTesting.Models;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -15,21 +16,20 @@ namespace DockerizedTesting
 {
     public abstract class BaseFixture<T> : IBaseFixture where T : FixtureOptions
     {
-        protected BaseFixture(string containerName, int exposedPorts, GlobalConfig config) :
-           this(containerName, exposedPorts, config.GetServiceProvider())
-        { }
-
         protected BaseFixture(string containerName, int exposedPorts) :
             this(containerName, exposedPorts, new GlobalConfig())
         { }
 
-        protected BaseFixture(string containerName, int exposedPorts, IServiceProvider serviceProvider)
+        protected BaseFixture(string containerName, int exposedPorts, GlobalConfig config)
         {
+            var serviceProvider = config.GetServiceProvider();
+            this.globalConfig = config;
             this.actions = serviceProvider.GetService<IContainerActions>();
             this.ContainerName = containerName;
-            this.Endpoints = this.actions.GetEndpoints(exposedPorts);
+            this.Endpoints = this.actions.ReservePorts(exposedPorts);
         }
 
+        private readonly GlobalConfig globalConfig;
         private readonly IContainerActions actions;
         protected readonly string ContainerName;
 
@@ -44,33 +44,44 @@ namespace DockerizedTesting
             this.uniqueContainerName ?? (this.uniqueContainerName =
                 $"{this.ContainerName}_{string.Join("_", this.Endpoints.Select(e => e.Port))}_{this.GetContainerParameters(this.Endpoints.Select(e => e.Port).ToArray()).GetHashCode()}"
             );
-                
+              
         protected async Task WaitForContainer(HostEndpoint[] endpoints)
         {
+            var mainTimer = Stopwatch.StartNew();
+            var tokenWithStats = this.actions.GetTokenWithStats(
+                TimeSpan.FromMilliseconds(this.Options.MaxRetries* this.Options.DelayMs));
+
             this.ContainerStarted = false;
-            int attempts = 0;
-            var sw = System.Diagnostics.Stopwatch.StartNew();
             do
             {
-                this.ContainerStarted = await this.IsContainerRunning(endpoints);
-                await Task.Delay(this.Options.DelayMs);
-            } while (!this.ContainerStarted && attempts++ <= this.Options.MaxRetries);
-            sw.Stop();
+                try
+                {
+                    this.ContainerStarted = await this.IsContainerRunning(endpoints, tokenWithStats.Token);
+                    await Task.Delay(this.Options.DelayMs, tokenWithStats.Token);
+                }
+                catch (TaskCanceledException) { }
+            } while (!this.ContainerStarted && !tokenWithStats.Token.IsCancellationRequested);
+            mainTimer.Stop();
             if (!this.ContainerStarted)
             {
-                throw new TimeoutException($"Container failed to start after {sw.Elapsed} ({this.Options.MaxRetries} attempts)");
+                var avgUsage = tokenWithStats.Usage.Any()
+                    ? Math.Round(tokenWithStats.Usage.Average(), 2).ToString()+"%"
+                    : "none";
+                throw new TimeoutException($"Container {ContainerId} failed to start after {mainTimer.Elapsed} (+{TimeSpan.FromMilliseconds(tokenWithStats.AdditionalMs)} - avg usage: {avgUsage})\n"+string.Join("\n",tokenWithStats.Usage));
             }
         }
 
         protected async Task<string> StartContainer(IEnumerable<int> ports)
         {
             var paramaters = GetContainerParameters(ports.ToArray());
-            //TODO: Possibly combine Config and Options?
-            return await this.actions.StartContainer(paramaters, Options.ImageProvider, this.UniqueContainerName);
+            var cancel = new CancellationTokenSource(this.Options.CreationTimeoutMs != 0
+                ? this.Options.CreationTimeoutMs
+                : this.globalConfig.DefaultCreationTimeoutMs);
+            return await this.actions.StartContainer(paramaters, Options.ImageProvider, this.UniqueContainerName, cancel.Token);
         }
         
         protected abstract CreateContainerParameters GetContainerParameters(int[] ports);
-        protected abstract Task<bool> IsContainerRunning(HostEndpoint[] endpoints);
+        protected abstract Task<bool> IsContainerRunning(HostEndpoint[] endpoints, CancellationToken token);
 
         public virtual async Task Start(T opts)
         {
@@ -84,10 +95,14 @@ namespace DockerizedTesting
         public bool IsDisposed { get; protected set; }
         public T Options;
 
-        public virtual void Dispose()
+        public void Dispose()
         {
-            //TODO: When .net 3 is out create a watchdog process using https://laurentkempe.com/2019/02/18/dynamically-compile-and-run-code-using-dotNET-Core-3.0/
-            if (this.IsDisposed || this.ContainerId == null)
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposing || this.IsDisposed || this.ContainerId == null)
             {
                 return;
             }

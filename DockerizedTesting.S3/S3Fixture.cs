@@ -14,7 +14,7 @@ using DockerizedTesting.Models;
 
 namespace DockerizedTesting.S3
 {
-    public class S3Fixture : BaseFixture<S3FixtureOptions>, IDisposable
+    public class S3Fixture : BaseFixture<S3FixtureOptions>
     {
         public S3Fixture() : base("s3", 1)
         {
@@ -70,7 +70,7 @@ namespace DockerizedTesting.S3
             };
         }
 
-        protected override async Task<bool> IsContainerRunning(HostEndpoint[] endpoints)
+        protected override async Task<bool> IsContainerRunning(HostEndpoint[] endpoints, CancellationToken cancellationToken)
         {
             try
             {
@@ -84,7 +84,7 @@ namespace DockerizedTesting.S3
                         ReadWriteTimeout = TimeSpan.FromSeconds(3),
                         MaxErrorRetry = 1
                     });
-                var cts = new CancellationTokenSource();
+                var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
                 cts.CancelAfter(6000);
                 const string bucketName = "foo";
                 await s3Client.PutBucketAsync(new PutBucketRequest { BucketName = bucketName }, cts.Token);
@@ -98,9 +98,14 @@ namespace DockerizedTesting.S3
             }
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            base.Dispose();
+            base.Dispose(disposing);
+            if (!disposing)
+            {
+                return;
+            }
+
             if (this.tmpPath != null && Directory.Exists(this.tmpPath))
             {
                 Directory.Delete(this.tmpPath, true);

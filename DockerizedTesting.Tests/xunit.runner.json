@@ -1,3 +1,5 @@
 {
-  "parallelizeAssembly": true
+  // the load related tests mock CPU load - they misbehave if under real load at the same time
+  "parallelizeAssembly": false,
+  "parallelizeTestCollections": false
 }

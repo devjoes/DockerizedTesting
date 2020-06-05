@@ -20,7 +20,8 @@ WORKDIR /app
 COPY . src
 # When running locally the dacpac is in bin/debug/ or bin/release
 # When published all of the artifacts are in the same folder
-RUN cp `ls -t src/*.dacpac 2>/dev/null || ls -t src/*/*/*.dacpac | head -n 1` deploy.dacpac
+RUN find src
+RUN cp `ls -t src/*.dacpac 2>/dev/null || ls -t src/*/*/*/*/*.dacpac | head -n 1` deploy.dacpac
 RUN cp src/*.publish.xml . 2>/dev/null; exit 0
 RUN rm -Rf src
 
@@ -47,7 +48,8 @@ ENV ACCEPT_EULA=Y
 ENV SA_PASSWORD=$PASSWORD
 # Launch SQL Server, confirm startup is complete, deploy the DACPAC, then terminate SQL Server.
 # See https://stackoverflow.com/a/51589787/488695
-RUN ( /opt/mssql/bin/sqlservr & ) | grep -q "Service Broker manager has started" \
+RUN ( /opt/mssql/bin/sqlservr | tee /tmp/log & ) | grep -q "Service Broker manager has started" \
     && /opt/sqlpackage/sqlpackage /a:Publish /tsn:. /tdn:${DATABASE} /tu:sa /tp:${PASSWORD} /sf:/deploy.dacpac \
     && rm deploy.dacpac \
-    && pkill sqlservr
+    && pkill sqlservr \
+	|| cat /tmp/log

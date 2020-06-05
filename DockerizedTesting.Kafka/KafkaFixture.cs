@@ -12,11 +12,19 @@ namespace DockerizedTesting.Kafka
 {
     public class KafkaFixture : ComposedFixture<ZooKeeperFixture, KafkaNodeFixture>
     {
-        private const string NetworkName = "net-kafka-zookeeper";
+        private const string PreferredNetworkName = "net-kafka-zookeeper";
 
-        public KafkaFixture() : base(NetworkName)
+        public KafkaFixture() : base(PreferredNetworkName)
         {
         }
+
+        //public KafkaFixture(string preferredNetworkName,GlobalConfig config) : base(preferredNetworkName, config)
+        //{
+        //}
+
+        //public KafkaFixture(GlobalConfig config) : base(PreferredNetworkName, config)
+        //{
+        //}
 
         public async Task Start()
         {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Docker.DotNet.Models;
 using DockerizedTesting.Models;
@@ -48,7 +49,7 @@ namespace DockerizedTesting.Kafka
                 HostConfig = hostConfig
             };
         }
-        protected override Task<bool> IsContainerRunning(HostEndpoint[] endpoints)
+        protected override Task<bool> IsContainerRunning(HostEndpoint[] endpoints, CancellationToken cancellationToken)
         {
             return Task.FromResult(true); //TODO: ????
         }
