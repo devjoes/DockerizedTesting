@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DockerizedTesting.Kafka\DockerizedTesting.Kafka.csproj" />
+    <ProjectReference Include="..\DockerizedTesting.Tests\DockerizedTesting.Tests.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Docker.DotNet.Models;
 using DockerizedTesting.Models;
@@ -40,7 +39,7 @@ namespace DockerizedTesting.Redis
             };
         }
 
-        protected override async Task<bool> IsContainerRunning(HostEndpoint[] endpoints, CancellationToken cancellationToken)
+        protected override async Task<bool> IsContainerRunning(HostEndpoint[] endpoints)
         {
             try
             {

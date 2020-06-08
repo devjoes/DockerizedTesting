@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DockerizedTesting.MsSql\DockerizedTesting.MsSql.csproj" />
+    <ProjectReference Include="..\DockerizedTesting.Tests\DockerizedTesting.Tests.csproj" />
   </ItemGroup>
 
 </Project>

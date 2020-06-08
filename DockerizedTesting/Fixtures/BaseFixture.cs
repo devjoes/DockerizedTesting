@@ -5,7 +5,6 @@ using DockerizedTesting.Models;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -44,30 +43,21 @@ namespace DockerizedTesting
             this.uniqueContainerName ?? (this.uniqueContainerName =
                 $"{this.ContainerName}_{string.Join("_", this.Endpoints.Select(e => e.Port))}_{this.GetContainerParameters(this.Endpoints.Select(e => e.Port).ToArray()).GetHashCode()}"
             );
-              
+
         protected async Task WaitForContainer(HostEndpoint[] endpoints)
         {
-            var mainTimer = Stopwatch.StartNew();
-            var tokenWithStats = this.actions.GetTokenWithStats(
-                TimeSpan.FromMilliseconds(this.Options.MaxRetries* this.Options.DelayMs));
-
             this.ContainerStarted = false;
+            int attempts = 0;
+            var sw = System.Diagnostics.Stopwatch.StartNew();
             do
             {
-                try
-                {
-                    this.ContainerStarted = await this.IsContainerRunning(endpoints, tokenWithStats.Token);
-                    await Task.Delay(this.Options.DelayMs, tokenWithStats.Token);
-                }
-                catch (TaskCanceledException) { }
-            } while (!this.ContainerStarted && !tokenWithStats.Token.IsCancellationRequested);
-            mainTimer.Stop();
+                this.ContainerStarted = await this.IsContainerRunning(endpoints);
+                await Task.Delay(this.Options.DelayMs);
+            } while (!this.ContainerStarted && attempts++ <= this.Options.MaxRetries);
+            sw.Stop();
             if (!this.ContainerStarted)
             {
-                var avgUsage = tokenWithStats.Usage.Any()
-                    ? Math.Round(tokenWithStats.Usage.Average(), 2).ToString()+"%"
-                    : "none";
-                throw new TimeoutException($"Container {ContainerId} failed to start after {mainTimer.Elapsed} (+{TimeSpan.FromMilliseconds(tokenWithStats.AdditionalMs)} - avg usage: {avgUsage})\n"+string.Join("\n",tokenWithStats.Usage));
+                throw new TimeoutException($"Container failed to start after {sw.Elapsed} ({this.Options.MaxRetries} attempts)");
             }
         }
 
@@ -77,14 +67,19 @@ namespace DockerizedTesting
             var cancel = new CancellationTokenSource(this.Options.CreationTimeoutMs != 0
                 ? this.Options.CreationTimeoutMs
                 : this.globalConfig.DefaultCreationTimeoutMs);
-            return await this.actions.StartContainer(paramaters, Options.ImageProvider, this.UniqueContainerName, cancel.Token);
+            return await this.actions.StartContainer(paramaters, Options.DelayedScheduling, Options.ImageProvider, this.UniqueContainerName, cancel.Token);
         }
-        
+
         protected abstract CreateContainerParameters GetContainerParameters(int[] ports);
-        protected abstract Task<bool> IsContainerRunning(HostEndpoint[] endpoints, CancellationToken token);
+        protected abstract Task<bool> IsContainerRunning(HostEndpoint[] endpoints);
 
         public virtual async Task Start(T opts)
         {
+            if (this.ContainerStarted)
+            {
+                //TODO: Currently this is shared between all tests in a fixture. Add option to restart on each run
+                return;
+            }
             this.Options = opts;
             this.ContainerStarted = false;
             this.ContainerStarting = true;

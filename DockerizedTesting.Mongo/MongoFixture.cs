@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Docker.DotNet.Models;
 using DockerizedTesting.Models;
@@ -40,13 +39,13 @@ namespace DockerizedTesting.Mongo
             };
         }
 
-        protected override async Task<bool> IsContainerRunning(HostEndpoint[] endpoints, CancellationToken cancellationToken)
+        protected override async Task<bool> IsContainerRunning(HostEndpoint[] endpoints)
         {
             try
             {
                 var connectionString = this.GetMongoConnectionString(endpoints.Single());
                 var client = new MongoClient(connectionString);
-                await (await client.ListDatabaseNamesAsync(cancellationToken)).ToListAsync(cancellationToken);
+                await (await client.ListDatabaseNamesAsync()).ToListAsync();
                 return true;
             }
             catch

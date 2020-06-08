@@ -1,8 +1,12 @@
 using System;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using DockerizedTesting.Tests.Containers;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace DockerizedTesting.MsSql.Tests
 {
@@ -10,8 +14,9 @@ namespace DockerizedTesting.MsSql.Tests
     {
         private readonly MsSqlFixture fixture;
 
-        public MsSqlFixtureTests(MsSqlFixture fixture)
+        public MsSqlFixtureTests(MsSqlFixture fixture, ITestOutputHelper output)
         {
+            Console.SetOut(new ConsoleXunitAdapter(output));
             fixture.Start().Wait();
             this.fixture = fixture;
         }

@@ -1,8 +1,11 @@
 using System;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using DockerizedTesting.Tests.Containers;
 using RabbitMQ.Client;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace DockerizedTesting.RabbitMQ.Tests
 {
@@ -10,8 +13,9 @@ namespace DockerizedTesting.RabbitMQ.Tests
     {
         private readonly RabbitMqFixture fixture;
 
-        public RabbitMqFixtureTests(RabbitMqFixture fixture)
+        public RabbitMqFixtureTests(RabbitMqFixture fixture, ITestOutputHelper output)
         {
+            Console.SetOut(new ConsoleXunitAdapter(output));
             fixture.Start().GetAwaiter().GetResult();
             this.fixture = fixture;
         }
@@ -41,4 +45,5 @@ namespace DockerizedTesting.RabbitMQ.Tests
             }
         }
     }
+
 }

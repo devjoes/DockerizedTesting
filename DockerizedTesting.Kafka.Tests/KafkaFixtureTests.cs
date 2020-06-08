@@ -1,11 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using DockerizedTesting.Models;
+using DockerizedTesting.Tests.Containers;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace DockerizedTesting.Kafka.Tests
 {
@@ -14,8 +18,9 @@ namespace DockerizedTesting.Kafka.Tests
         private const string KafkaTopicName = "foo";
         private readonly KafkaFixture fixture;
 
-        public KafkaFixtureTests(KafkaFixture fixture)
+        public KafkaFixtureTests(KafkaFixture fixture, ITestOutputHelper output)
         {
+            Console.SetOut(new ConsoleXunitAdapter(output));
             this.fixture = fixture;
             this.fixture.Start(new KafkaFixtureOptions
             {

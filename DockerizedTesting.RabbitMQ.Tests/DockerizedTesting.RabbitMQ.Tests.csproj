@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DockerizedTesting.RabbitMQ\DockerizedTesting.RabbitMQ.csproj" />
+    <ProjectReference Include="..\DockerizedTesting.Tests\DockerizedTesting.Tests.csproj" />
   </ItemGroup>
 
 </Project>

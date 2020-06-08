@@ -7,6 +7,15 @@ namespace DockerizedTesting.MsSql
 {
     public class MsSqlFixtureOptions : FixtureOptions
     {
+        // This is quite a beefy container so we say it can't run withing 10 seconds of more than 3 other containers running
+        public override DelayedSchedulingOptions DelayedScheduling =>
+            new DelayedSchedulingOptions
+            {
+                MaxContainers = 3,
+                SchedulingWindowBefore = TimeSpan.FromSeconds(10),
+                SchedulingWindowAfter = TimeSpan.FromSeconds(10)
+            };
+
         public override IDockerImageProvider ImageProvider { get; } = new DockerRepoImageProvider("mcr.microsoft.com/mssql/server:latest");
         public string SaPassword { get; set; } = "D0cK3rIz3d_T3sting!!";
         public bool AcceptEula { get; set; } = true;

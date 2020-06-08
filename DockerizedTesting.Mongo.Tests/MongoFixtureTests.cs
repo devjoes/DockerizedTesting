@@ -1,10 +1,14 @@
 using System;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
 using DockerizedTesting.Containers;
+using DockerizedTesting.Tests.Containers;
 using MongoDB.Driver;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace DockerizedTesting.Mongo.Tests
 {
@@ -13,8 +17,9 @@ namespace DockerizedTesting.Mongo.Tests
     {
         private readonly MongoFixture mongoFixture;
 
-        public MongoFixtureTests(MongoFixture mongoFixture)
+        public MongoFixtureTests(MongoFixture mongoFixture, ITestOutputHelper output)
         {
+            Console.SetOut(new ConsoleXunitAdapter(output));
             mongoFixture.Start().Wait();
             this.mongoFixture = mongoFixture;
         }

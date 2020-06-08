@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Threading;
 using System.Threading.Tasks;
 using Docker.DotNet.Models;
 using DockerizedTesting;
@@ -54,7 +53,7 @@ namespace ExampleProject.Tests
             };
         }
 
-        protected override async Task<bool> IsContainerRunning(HostEndpoint[] endpoints, CancellationToken cancellationToken)
+        protected override async Task<bool> IsContainerRunning(HostEndpoint[] endpoints)
         {
             var client = new HttpClient();
             try

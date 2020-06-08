@@ -70,7 +70,7 @@ namespace DockerizedTesting.S3
             };
         }
 
-        protected override async Task<bool> IsContainerRunning(HostEndpoint[] endpoints, CancellationToken cancellationToken)
+        protected override async Task<bool> IsContainerRunning(HostEndpoint[] endpoints)
         {
             try
             {
@@ -84,7 +84,7 @@ namespace DockerizedTesting.S3
                         ReadWriteTimeout = TimeSpan.FromSeconds(3),
                         MaxErrorRetry = 1
                     });
-                var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+                var cts = new CancellationTokenSource();
                 cts.CancelAfter(6000);
                 const string bucketName = "foo";
                 await s3Client.PutBucketAsync(new PutBucketRequest { BucketName = bucketName }, cts.Token);
