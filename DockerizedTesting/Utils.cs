@@ -25,5 +25,11 @@ namespace DockerizedTesting
                     })
             };
 
+        public static HostConfig HostWithBoundPorts(int[] hostPorts, Action<HostConfig> extraConfig, params int[] containerPorts)
+        {
+            var config = HostWithBoundPorts(hostPorts, containerPorts);
+            extraConfig(config);
+            return config;
+        }
     }
 }

@@ -37,9 +37,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExampleProject.Tests", "Exa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExampleDatabase.Tests", "Examples\ExampleDatabase.Tests\ExampleDatabase.Tests.csproj", "{9AF444D7-8A0D-4FD5-B599-35F5AC11DB4D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DockerizedTesting.RabbitMQ", "DockerizedTesting.RabbitMQ\DockerizedTesting.RabbitMQ.csproj", "{6C6B04FD-25F5-41EF-AF2C-2157C53679A7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DockerizedTesting.RabbitMQ", "DockerizedTesting.RabbitMQ\DockerizedTesting.RabbitMQ.csproj", "{6C6B04FD-25F5-41EF-AF2C-2157C53679A7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DockerizedTesting.RabbitMQ.Tests", "DockerizedTesting.RabbitMQ.Tests\DockerizedTesting.RabbitMQ.Tests.csproj", "{D4BC5275-C599-44A1-962A-1F23A08BD49B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DockerizedTesting.RabbitMQ.Tests", "DockerizedTesting.RabbitMQ.Tests\DockerizedTesting.RabbitMQ.Tests.csproj", "{D4BC5275-C599-44A1-962A-1F23A08BD49B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DockerizedTesting.Azurite", "DockerizedTesting.Azurite\DockerizedTesting.Azurite.csproj", "{624F6693-AF42-4509-88A6-34E2EE425622}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DockerizedTesting.Azurite.Tests", "DockerizedTesting.Azurite.Tests\DockerizedTesting.Azurite.Tests.csproj", "{AA840F4D-D341-4CA8-B402-D4D947E5B78F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -121,6 +125,14 @@ Global
 		{D4BC5275-C599-44A1-962A-1F23A08BD49B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D4BC5275-C599-44A1-962A-1F23A08BD49B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D4BC5275-C599-44A1-962A-1F23A08BD49B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{624F6693-AF42-4509-88A6-34E2EE425622}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{624F6693-AF42-4509-88A6-34E2EE425622}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{624F6693-AF42-4509-88A6-34E2EE425622}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{624F6693-AF42-4509-88A6-34E2EE425622}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA840F4D-D341-4CA8-B402-D4D947E5B78F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA840F4D-D341-4CA8-B402-D4D947E5B78F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA840F4D-D341-4CA8-B402-D4D947E5B78F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA840F4D-D341-4CA8-B402-D4D947E5B78F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
