@@ -9,7 +9,7 @@
 		<PackageProjectUrl>https://github.com/devjoes/DockerizedTesting</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/devjoes/DockerizedTesting</RepositoryUrl>
 		<PackageTags>docker azure blob azurestorage storageaccount unittesting testing</PackageTags>
-		<Version>1.0.0</Version>
+		<Version>1.0.1</Version>
 		<AssemblyVersion>1.0.0.0</AssemblyVersion>
 		<FileVersion>1.0.0.0</FileVersion>
 		<PackageLicenseFile>license.txt</PackageLicenseFile>
