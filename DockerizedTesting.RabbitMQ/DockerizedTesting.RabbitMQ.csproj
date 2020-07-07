@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -9,12 +9,8 @@
     <PackageProjectUrl>https://github.com/devjoes/DockerizedTesting</PackageProjectUrl>
     <RepositoryUrl>https://github.com/devjoes/DockerizedTesting</RepositoryUrl>
     <PackageTags>docker rabbitmq rabbit unittesting testing</PackageTags>
-    <Version>1.2.0</Version>
+    <Version>1.2.1</Version>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="RabbitMQ.Client" Version="6.0.0" />
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\DockerizedTesting\DockerizedTesting.csproj" />
