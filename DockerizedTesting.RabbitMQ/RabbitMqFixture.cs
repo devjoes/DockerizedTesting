@@ -55,6 +55,7 @@ namespace DockerizedTesting.RabbitMQ
                 await sender.ConnectAsync(remoteEP);
                 sender.Dispose();
                 this.success++;
+		await Task.Delay(1000);
                 return await Task.FromResult(this.success >= 5);
             }
             catch
