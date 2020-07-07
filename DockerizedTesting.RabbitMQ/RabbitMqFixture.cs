@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Threading.Tasks;
 using Docker.DotNet.Models;
-using RabbitMQ.Client;
 
 namespace DockerizedTesting.RabbitMQ
 {
@@ -42,35 +43,19 @@ namespace DockerizedTesting.RabbitMQ
                 HostConfig = Utils.HostWithBoundPorts(ports, containerPorts)
             };
         }
-
-        public ConnectionFactory SetupConnectionFactory(ConnectionFactory connectionFactory)
-        {
-            connectionFactory.HostName = "localhost";
-            connectionFactory.Port = Ports.First();
-            connectionFactory.UserName = this.Options.UserName;
-            connectionFactory.Password = this.Options.Password;
-            return connectionFactory;
-        }
-
+        
         private int success = 0;
         protected override async Task<bool> IsContainerRunning(int[] ports)
         {
             try
             {
-                var factory = this.SetupConnectionFactory(new ConnectionFactory());
-                using (var connection = factory.CreateConnection())
-                {
-                    using (var channel = connection.CreateModel())
-                    {
-                        if (channel.IsClosed)
-                        {
-                            throw new InvalidOperationException();
-                        }
-
-                    }
-                }
+                IPEndPoint remoteEP = new IPEndPoint(IPAddress.Loopback, ports.First());
+                Socket sender = new Socket(IPAddress.Loopback.AddressFamily,
+                    SocketType.Stream, ProtocolType.Tcp);
+                await sender.ConnectAsync(remoteEP);
+                sender.Dispose();
                 this.success++;
-                return await Task.FromResult(this.success >= 5); // Rabbit seems to work then stop?
+                return await Task.FromResult(this.success >= 5);
             }
             catch
             {

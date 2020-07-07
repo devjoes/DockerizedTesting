@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using RabbitMQ.Client;
@@ -19,7 +20,11 @@ namespace DockerizedTesting.RabbitMQ.Tests
         [Fact]
         public void RabbitIsReachable()
         {
-            var factory = this.fixture.SetupConnectionFactory(new ConnectionFactory());
+            var factory = new ConnectionFactory();
+            factory.HostName = "localhost";
+            factory.Port = this.fixture.Ports.First();
+            factory.UserName = this.fixture.Options.UserName;
+            factory.Password = this.fixture.Options.Password;
             using (var connection = factory.CreateConnection())
             {
                 using (var channel = connection.CreateModel())
