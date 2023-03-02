@@ -30,7 +30,7 @@ Made mounting a volume optional (you can sometimes get this issue otherwise http
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AWSSDK.S3" Version="3.3.105.1" />
+    <PackageReference Include="AWSSDK.S3" Version="3.7.103.19" />
   </ItemGroup>
 
   <ItemGroup>

@@ -17,8 +17,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Docker.DotNet" Version="3.125.2" />
-    <PackageReference Include="MongoDB.Driver" Version="2.9.2" />
+    <PackageReference Include="Docker.DotNet" Version="3.125.13" />
+    <PackageReference Include="MongoDB.Driver" Version="2.19.0" />
   </ItemGroup>
 
   <ItemGroup>
