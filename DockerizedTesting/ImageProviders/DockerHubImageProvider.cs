@@ -18,7 +18,17 @@ namespace DockerizedTesting.ImageProviders
         public async Task<string> GetImage(IDockerClient dockerClient)
         {
             var splitImage = this.image.Split(':');
-            if (!(await dockerClient.Images.ListImagesAsync(new ImagesListParameters { MatchName = this.image })).Any())
+
+            ImageInspectResponse inspectExistingImageResponse = new ImageInspectResponse();
+            try
+            {
+                inspectExistingImageResponse = await dockerClient.Images.InspectImageAsync(this.image);
+            }
+            catch (DockerImageNotFoundException)
+            {
+                inspectExistingImageResponse = null;
+            }
+            if (inspectExistingImageResponse == null)
             {
                 await dockerClient.Images.CreateImageAsync(new ImagesCreateParameters
                 {
