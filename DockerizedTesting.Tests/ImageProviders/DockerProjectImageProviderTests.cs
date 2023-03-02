@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Docker.DotNet;
 using Docker.DotNet.Models;
 using DockerizedTesting.Containers;
 using DockerizedTesting.ImageProviders;
@@ -52,10 +53,16 @@ namespace DockerizedTesting.Tests.ImageProviders
             var imageSource = new DockerProjectImageProvider(file);
 
             string tag = await imageSource.GetImage(null);
-            var image = await new DockerClientProvider().GetDockerClient().Images
-                .ListImagesAsync(new ImagesListParameters { MatchName = tag });
-
-            Assert.Single(image);
+            ImageInspectResponse inspectExistingImageResponse;
+            try
+            {
+                inspectExistingImageResponse = await new DockerClientProvider().GetDockerClient().Images.InspectImageAsync(tag);
+            }
+            catch (DockerImageNotFoundException)
+            {
+                inspectExistingImageResponse = null;
+            }
+            Assert.NotNull(inspectExistingImageResponse);
         }
 
         [Fact]
@@ -71,10 +78,16 @@ namespace DockerizedTesting.Tests.ImageProviders
             var imageSource = new DockerProjectImageProvider(name, projectLocator.Object);
 
             string tag = await imageSource.GetImage(null);
-            var image = await new DockerClientProvider().GetDockerClient().Images
-                .ListImagesAsync(new ImagesListParameters { MatchName = tag });
-
-            Assert.Single(image);
+            ImageInspectResponse inspectExistingImageResponse;
+            try
+            {
+                inspectExistingImageResponse = await new DockerClientProvider().GetDockerClient().Images.InspectImageAsync(tag);
+            }
+            catch (DockerImageNotFoundException)
+            {
+                inspectExistingImageResponse = null;
+            }
+            Assert.NotNull(inspectExistingImageResponse);
         }
     }
 }

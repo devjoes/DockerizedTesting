@@ -168,14 +168,20 @@ namespace DockerizedTesting.ImageProviders
             {
                 using (var result = await dockerClient.Images.BuildImageFromDockerfileAsync(tarball, this.buildParameters))
                 {
-
                     using (var reader = new StreamReader(result))
                     {
                         string resultContent = reader.ReadToEnd();
-
-                        var images = await dockerClient.Images.ListImagesAsync(new ImagesListParameters{MatchName = tag });
-                        if (!images.Any())
+                        ImageInspectResponse inspectExistingImageResponse = new ImageInspectResponse();
+                        try
                         {
+                            inspectExistingImageResponse = await dockerClient.Images.InspectImageAsync(tag);
+                        }
+                        catch (DockerImageNotFoundException)
+                        {
+                            inspectExistingImageResponse = null;
+                        }
+                        if (inspectExistingImageResponse == null)
+                        {                         
                             throw new DockerBuildFailedException(resultContent);
                         }
                     }
